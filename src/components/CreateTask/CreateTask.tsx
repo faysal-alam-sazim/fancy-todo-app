@@ -1,8 +1,9 @@
 import { Button, Modal, Select, TextInput, Textarea } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { Task } from "../../types/Task";
 import "@mantine/dates/styles.css";
+
+import { Task } from "../../types/Task";
 import {
   addTaskToLocalStorage,
   getLastTaskId,
@@ -16,6 +17,7 @@ type CreateTaskProps = {
 
 function CreateTask({ opened, close }: CreateTaskProps) {
   const { control, handleSubmit, reset } = useForm<Task>();
+
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const id = getLastTaskId() + 1;
     const task: Task = {
@@ -29,6 +31,7 @@ function CreateTask({ opened, close }: CreateTaskProps) {
     saveLastTaskId(id);
     reset();
   };
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Create Task" centered>
