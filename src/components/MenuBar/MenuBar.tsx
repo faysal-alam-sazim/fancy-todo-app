@@ -6,13 +6,17 @@ import { IconFilter } from "@tabler/icons-react";
 >>>>>>> ae13ba3 (Implemented MenuBar)
 import classes from "./MenuBar.module.css";
 
-function MenuBar() {
+type MenuBarProps = {
+  open: () => void;
+};
+
+function MenuBar({ open }: MenuBarProps) {
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
           <Text>TO-DO App</Text>
-          <Button>Create Task</Button>
+          <Button onClick={open}>Create Task</Button>
         </Group>
         <Text className={classes.link}>
           <IconFilter className={classes.linkIcon} stroke={1.5} />
