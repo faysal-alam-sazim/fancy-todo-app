@@ -1,8 +1,7 @@
-import { Button, Modal, TextInput, Textarea } from "@mantine/core";
+import { Button, Modal, Select, TextInput, Textarea } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Task } from "../../types/Task";
-import { useState } from "react";
 import {
   addTaskToLocalStorage,
   getLastTaskId,
@@ -15,15 +14,15 @@ type CreateTaskProps = {
 };
 
 function CreateTask({ opened, close }: CreateTaskProps) {
-  const [date, setDate] = useState<Date | null>(null);
-  const { register, handleSubmit, reset } = useForm<Task>();
+  const { control, handleSubmit, reset } = useForm<Task>();
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const id = getLastTaskId() + 1;
     const task: Task = {
       id: id,
       title: data.title,
       description: data.description,
-      dueDate: date,
+      dueDate: data.dueDate,
+      priority: data.priority,
     };
     addTaskToLocalStorage(task);
     saveLastTaskId(id);
@@ -36,21 +35,46 @@ function CreateTask({ opened, close }: CreateTaskProps) {
           onSubmit={handleSubmit(onSubmit)}
           style={{ display: "flex", flexDirection: "column", gap: 12 }}
         >
-          <TextInput
-            label="Task Title"
-            placeholder="title"
-            {...register("title")}
+          <Controller
+            name="title"
+            control={control}
+            render={({ field }) => (
+              <TextInput label="Task Title" placeholder="title" {...field} />
+            )}
           />
-          <Textarea
-            label="Task Details"
-            placeholder="description"
-            {...register("description")}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <Textarea
+                label="Task Details"
+                placeholder="description"
+                {...field}
+              />
+            )}
           />
-          <DateInput
-            label="Add Due Date"
-            placeholder="due date"
-            value={date}
-            onChange={setDate}
+          <Controller
+            name="dueDate"
+            control={control}
+            render={({ field }) => <DateInput label="Due Date" {...field} />}
+          />
+
+          <Controller
+            name="priority"
+            control={control}
+            defaultValue={"0"}
+            render={({ field }) => (
+              <Select
+                label="Priority"
+                placeholder="set priority"
+                {...field}
+                data={[
+                  { value: "3", label: "High" },
+                  { value: "2", label: "Medium" },
+                  { value: "1", label: "Low" },
+                ]}
+              />
+            )}
           />
           <Button type="submit" onClick={close}>
             Create
