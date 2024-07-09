@@ -2,6 +2,7 @@ import { Button, Modal, Select, TextInput, Textarea } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Task } from "../../types/Task";
+import "@mantine/dates/styles.css";
 import {
   addTaskToLocalStorage,
   getLastTaskId,
