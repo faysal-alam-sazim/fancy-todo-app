@@ -1,6 +1,5 @@
 import { Group, Text, Button } from "@mantine/core";
 import { IconFilter } from "@tabler/icons-react";
-// import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "./MenuBar.module.css";
 
 function MenuBar() {
