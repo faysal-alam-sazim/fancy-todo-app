@@ -4,6 +4,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import "@mantine/dates/styles.css";
 
 import { Task } from "../../types/Task";
+import "@mantine/dates/styles.css";
 import {
   addTaskToLocalStorage,
   getLastTaskId,
