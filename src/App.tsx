@@ -1,8 +1,14 @@
+import { Text } from "@mantine/core";
+import MenuBar from "./components/MenuBar/MenuBar";
+
 function App() {
   return (
-    <>
-      <h1>Hello World!</h1>
-    </>
+    <div style={{ display: "flex", gap: "20px " }}>
+      <MenuBar />
+      <div style={{ marginTop: 20 }}>
+        <Text>Display all the tasks.</Text>
+      </div>
+    </div>
   );
 }
 
