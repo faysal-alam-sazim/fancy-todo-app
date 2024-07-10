@@ -1,12 +1,7 @@
-import { Text } from "@mantine/core";
 import MenuBar from "./components/MenuBar/MenuBar";
 import { useDisclosure } from "@mantine/hooks";
 import CreateTask from "./components/CreateTask/CreateTask";
-
-import { Text } from "@mantine/core";
-import MenuBar from "./components/MenuBar/MenuBar";
-import { useDisclosure } from "@mantine/hooks";
-import CreateTask from "./components/CreateTask/CreateTask";
+import DisplayTask from "./components/DisplayTask/DisplayTask";
 
 function App() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -14,8 +9,8 @@ function App() {
     <div style={{ display: "flex", gap: "20px " }}>
       <MenuBar open={open} />
       <div style={{ marginTop: 20 }}>
-        <Text>Display all the tasks.</Text>
-        <CreateTask opened={opened} close={close}></CreateTask>
+        <DisplayTask />
+        <CreateTask opened={opened} close={close} />
       </div>
     </div>
   );
