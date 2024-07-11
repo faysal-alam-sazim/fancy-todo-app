@@ -28,7 +28,7 @@ function EditTask({ opened, close, task }: EditTaskProps) {
   console.log("Edit task", task);
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Create Task" centered>
+      <Modal opened={opened} onClose={close} title="Edit Task" centered>
         <form
           onSubmit={handleSubmit(onSubmit)}
           style={{ display: "flex", flexDirection: "column", gap: 12 }}
