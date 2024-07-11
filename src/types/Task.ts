@@ -6,5 +6,5 @@ export interface Task {
   description: string;
   dueDate: Date | null;
   priority: Priority;
-  status: "initiated" | "completed";
+  status: string;
 }

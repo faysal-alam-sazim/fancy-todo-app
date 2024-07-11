@@ -3,7 +3,7 @@ import { DateInput } from "@mantine/dates";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import "@mantine/dates/styles.css";
 
-import { updateTaskInLocalStorage } from "../../../../localstorage/localstorage";
+import { updateTaskInLocalStorage } from "../../../../Shared/Utils/localstorage";
 import { Task } from "../../../../types/Task";
 
 type EditTaskProps = {

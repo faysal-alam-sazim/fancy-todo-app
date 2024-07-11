@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 import CreateTask from "./Pages/HomePage/components/CreateTask/CreateTask";
 import DisplayTask from "./Pages/HomePage/components/DisplayTask/DisplayTask";
-import { getSortedTasks } from "./localstorage/localstorage";
+import { getSortedTasks } from "../src/Shared/Utils/localstorage";
 import { Task } from "./types/Task";
 
 function App() {

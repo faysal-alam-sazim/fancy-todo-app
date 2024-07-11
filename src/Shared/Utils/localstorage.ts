@@ -1,4 +1,5 @@
-import { Task } from "../types/Task";
+import { TASK_STATES } from "../../Stores/TaskStates";
+import { Task } from "../../types/Task";
 
 function addTaskToLocalStorage(task: Task) {
   const previosStoredTasks = getTasksFromLocalStorage();
@@ -56,11 +57,17 @@ function getSortedTasks() {
   const tasks = getTasksFromLocalStorage();
 
   tasks.sort((a: Task, b: Task) => {
-    if (a.status === "completed" && b.status !== "completed") {
+    if (
+      a.status === TASK_STATES.COMPLETED &&
+      b.status !== TASK_STATES.COMPLETED
+    ) {
       return 1;
     }
 
-    if (a.status !== "completed" && b.status === "completed") {
+    if (
+      a.status !== TASK_STATES.COMPLETED &&
+      b.status === TASK_STATES.COMPLETED
+    ) {
       return -1;
     }
 

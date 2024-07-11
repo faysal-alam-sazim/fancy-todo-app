@@ -8,7 +8,8 @@ import {
   addTaskToLocalStorage,
   getLastTaskId,
   saveLastTaskId,
-} from "../../../../localstorage/localstorage";
+} from "../../../../Shared/Utils/localstorage";
+import { TASK_STATES } from "../../../../Stores/TaskStates";
 
 type CreateTaskProps = {
   opened: boolean;
@@ -26,7 +27,7 @@ function CreateTask({ opened, close }: CreateTaskProps) {
       description: data.description,
       dueDate: data.dueDate,
       priority: data.priority,
-      status: "initiated",
+      status: TASK_STATES.ACTIVE_STATE,
     };
 
     addTaskToLocalStorage(task);
