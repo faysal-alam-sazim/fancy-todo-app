@@ -38,7 +38,6 @@ function deleteTaskFromLocalStorage(task: Task) {
     (item: Task) => Number(item.id) !== Number(task.id)
   );
   const tasksAfterDelete = [...filteredPrevTasks];
-  localStorage.removeItem("tasks");
   localStorage.setItem("tasks", JSON.stringify(tasksAfterDelete));
   return tasksAfterDelete;
 }
