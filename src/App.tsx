@@ -11,8 +11,10 @@ import { Task } from "./types/Task";
 function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [tasks, setTasks] = useState<Task[]>([]);
+
   useEffect(() => {
     const data = getTasksFromLocalStorage();
+
     if (data.length > 0) {
       const sortedTasks = data
         .slice()
@@ -21,6 +23,7 @@ function App() {
     }
     return setTasks(data);
   }, []);
+
   return (
     <div className="container mx-auto">
       <Flex gap={20}>
