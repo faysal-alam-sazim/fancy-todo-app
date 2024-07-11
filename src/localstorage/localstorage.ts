@@ -42,6 +42,16 @@ function deleteTaskFromLocalStorage(task: Task) {
   return tasksAfterDelete;
 }
 
+function markTaskComplete(task: Task) {
+  const prevTasks = getTasksFromLocalStorage();
+  const filteredTasks = prevTasks.filter(
+    (item: Task) => Number(item.id) !== Number(task.id)
+  );
+  const updatedTasks = [...filteredTasks, task];
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  return updatedTasks;
+}
+
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
@@ -49,4 +59,5 @@ export {
   saveLastTaskId,
   updateTaskInLocalStorage,
   deleteTaskFromLocalStorage,
+  markTaskComplete,
 };

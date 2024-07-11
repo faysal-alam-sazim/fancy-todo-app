@@ -26,6 +26,7 @@ function CreateTask({ opened, close }: CreateTaskProps) {
       description: data.description,
       dueDate: data.dueDate,
       priority: data.priority,
+      status: "initiated",
     };
 
     addTaskToLocalStorage(task);

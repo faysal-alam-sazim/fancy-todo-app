@@ -22,6 +22,7 @@ function EditTask({ opened, close, task }: EditTaskProps) {
       description: data.description,
       dueDate: data.dueDate,
       priority: data.priority,
+      status: data.status,
     };
     updateTaskInLocalStorage(updatedTask);
   };
