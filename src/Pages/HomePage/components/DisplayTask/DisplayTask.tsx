@@ -14,10 +14,12 @@ type DisplayTaskProps = {
 function DisplayTask({ tasks }: DisplayTaskProps) {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [opened, { open, close }] = useDisclosure();
+
   const handleEditTask = (task: Task) => {
     setTaskToEdit(task);
     open();
   };
+
   return (
     <Flex gap={4} wrap={"wrap"}>
       {tasks.map((task) => (
