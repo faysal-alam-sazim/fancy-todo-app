@@ -17,6 +17,7 @@ type CreateTaskProps = {
 
 function CreateTask({ opened, close }: CreateTaskProps) {
   const { control, handleSubmit, reset } = useForm<Task>();
+  
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const id = getLastTaskId() + 1;
     const task: Task = {
@@ -26,10 +27,12 @@ function CreateTask({ opened, close }: CreateTaskProps) {
       dueDate: data.dueDate,
       priority: data.priority,
     };
+
     addTaskToLocalStorage(task);
     saveLastTaskId(id);
     reset();
   };
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Create Task" centered>
