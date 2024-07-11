@@ -3,21 +3,47 @@ import { useDisclosure } from "@mantine/hooks";
 import { Flex, Card, Text, Group, Button } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 import { Task } from "../../../../types/Task";
 import EditTask from "../EditTask/EditTask";
+import { deleteTaskFromLocalStorage } from "../../../../localstorage/localstorage";
 
 type DisplayTaskProps = {
   tasks: Task[];
+  setTasks: (newTasks: Task[]) => void;
 };
 
-function DisplayTask({ tasks }: DisplayTaskProps) {
+function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [opened, { open, close }] = useDisclosure();
 
   const handleEditTask = (task: Task) => {
     setTaskToEdit(task);
     open();
+  };
+
+  const handleDeleteTask = (task: Task) => {
+    const tasksAfterDelete = deleteTaskFromLocalStorage(task);
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTasks(tasksAfterDelete);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your task has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
 
   return (
@@ -34,7 +60,10 @@ function DisplayTask({ tasks }: DisplayTaskProps) {
         >
           <Group justify="space-between" mt="sm" mb="xs">
             <Text fw={500}>{task.title}</Text>
-            <div className="p-2 bg-red-600 text-white rounded-full cursor-pointer">
+            <div
+              className="p-2 bg-red-600 text-white rounded-full cursor-pointer"
+              onClick={() => handleDeleteTask(task)}
+            >
               <IconTrash />
             </div>
           </Group>
