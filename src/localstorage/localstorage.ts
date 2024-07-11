@@ -23,9 +23,19 @@ function getLastTaskId() {
   return lastSavedId;
 }
 
+function updateTaskInLocalStorage(task: Task) {
+  const previosStoredTasks = getTasksFromLocalStorage();
+  const filteredPrevTasks = previosStoredTasks.filter(
+    (item: Task) => Number(item.id) !== Number(task.id)
+  );
+  const updatedTasks = [...filteredPrevTasks, task];
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+}
+
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
   getLastTaskId,
   saveLastTaskId,
+  updateTaskInLocalStorage,
 };
