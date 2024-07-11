@@ -1,14 +1,19 @@
 import { Group, Text, Button } from "@mantine/core";
 import { IconFilter } from "@tabler/icons-react";
+
 import classes from "./MenuBar.module.css";
 
-function MenuBar() {
+type MenuBarProps = {
+  open: () => void;
+};
+
+function MenuBar({ open }: MenuBarProps) {
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
           <Text>TO-DO App</Text>
-          <Button>Create Task</Button>
+          <Button onClick={open}>Create Task</Button>
         </Group>
         <Text className={classes.link}>
           <IconFilter className={classes.linkIcon} stroke={1.5} />
