@@ -5,7 +5,7 @@ import { IconTrash } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
 import { Task } from "../../../../types/Task";
-import EditTask from "../EditTask/EditTask";
+import EditTask from "../../components/EditTask/EditTask";
 
 type DisplayTaskProps = {
   tasks: Task[];

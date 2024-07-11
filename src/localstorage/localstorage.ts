@@ -23,7 +23,6 @@ function getLastTaskId() {
   return lastSavedId;
 }
 
-<<<<<<< HEAD
 function updateTaskInLocalStorage(task: Task) {
   const previosStoredTasks = getTasksFromLocalStorage();
   const filteredPrevTasks = previosStoredTasks.filter(
@@ -33,15 +32,10 @@ function updateTaskInLocalStorage(task: Task) {
   localStorage.setItem("tasks", JSON.stringify(updatedTasks));
 }
 
-=======
->>>>>>> d9506ed (chore(FTDA): Add self closingtags for MenuBar)
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
   getLastTaskId,
   saveLastTaskId,
-<<<<<<< HEAD
   updateTaskInLocalStorage,
-=======
->>>>>>> d9506ed (chore(FTDA): Add self closingtags for MenuBar)
 };
