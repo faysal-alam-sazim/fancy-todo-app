@@ -1,23 +1,14 @@
 import { Flex, Card, Text, Group, Button } from "@mantine/core";
-import { getTasksFromLocalStorage } from "../../localstorage/localstorage";
-import { useEffect, useState } from "react";
-import { Task } from "../../types/Task";
-import dayjs from "dayjs";
 import { IconTrash } from "@tabler/icons-react";
+import dayjs from "dayjs";
 
-function DisplayTask() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  useEffect(() => {
-    const data = getTasksFromLocalStorage();
-    if (data.length > 0) {
-      const sortedTasks = data
-        .slice()
-        .sort((a: Task, b: Task) => Number(b.priority) - Number(a.priority));
-      return setTasks(sortedTasks);
-    }
-    return setTasks(data);
-  }, []);
-  console.log(tasks);
+import { Task } from "../../../../types/Task";
+
+type DisplayTaskProps = {
+  tasks: Task[];
+};
+
+function DisplayTask({ tasks }: DisplayTaskProps) {
   return (
     <Flex gap={4} wrap={"wrap"}>
       {tasks.map((task) => (
