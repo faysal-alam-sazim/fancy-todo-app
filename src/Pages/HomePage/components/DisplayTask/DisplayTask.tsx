@@ -56,6 +56,7 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
           withBorder
           style={{ minWidth: 400 }}
           key={task.id}
+
         >
           <Group justify="space-between" mt="sm" mb="xs">
             <Text fw={500}>{task.title}</Text>

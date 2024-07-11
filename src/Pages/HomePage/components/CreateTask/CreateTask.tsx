@@ -17,7 +17,7 @@ type CreateTaskProps = {
 
 function CreateTask({ opened, close }: CreateTaskProps) {
   const { control, handleSubmit, reset } = useForm<Task>();
-
+  
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const id = getLastTaskId() + 1;
     const task: Task = {
