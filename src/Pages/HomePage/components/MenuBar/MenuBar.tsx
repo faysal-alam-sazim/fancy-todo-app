@@ -1,5 +1,6 @@
 import { Group, Text, Button } from "@mantine/core";
 import { IconFilter } from "@tabler/icons-react";
+
 import classes from "./MenuBar.module.css";
 
 type MenuBarProps = {
