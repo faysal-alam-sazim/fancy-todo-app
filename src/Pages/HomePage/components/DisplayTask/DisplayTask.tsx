@@ -30,6 +30,7 @@ function DisplayTask({ tasks }: DisplayTaskProps) {
           withBorder
           style={{ minWidth: 400 }}
           key={task.id}
+
         >
           <Group justify="space-between" mt="sm" mb="xs">
             <Text fw={500}>{task.title}</Text>
@@ -60,7 +61,6 @@ function DisplayTask({ tasks }: DisplayTaskProps) {
           </Text>
           <Flex justify={"space-between"} align={"center"}>
             <Button onClick={() => handleEditTask(task)}>Edit</Button>
-
             <Button color="green">Mark as complete</Button>
           </Flex>
         </Card>
