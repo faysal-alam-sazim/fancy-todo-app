@@ -99,7 +99,7 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
               <Button disabled>Completed</Button>
             ) : (
               <>
-                <Button>Edit</Button>
+                <Button onClick={() => handleEditTask(task)}>Edit</Button>
                 <Button color="green" onClick={() => handleMarkComplete(task)}>
                   Mark as complete
                 </Button>

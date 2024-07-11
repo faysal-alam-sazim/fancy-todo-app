@@ -52,6 +52,23 @@ function markTaskComplete(task: Task) {
   return updatedTasks;
 }
 
+function getSortedTasks() {
+  const tasks = getTasksFromLocalStorage();
+
+  tasks.sort((a: Task, b: Task) => {
+    if (a.status === "completed" && b.status !== "completed") {
+      return 1;
+    }
+
+    if (a.status !== "completed" && b.status === "completed") {
+      return -1;
+    }
+
+    return Number(b.priority) - Number(a.priority);
+  });
+  return tasks;
+}
+
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
@@ -60,4 +77,5 @@ export {
   updateTaskInLocalStorage,
   deleteTaskFromLocalStorage,
   markTaskComplete,
+  getSortedTasks,
 };

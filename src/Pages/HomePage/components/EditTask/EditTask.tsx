@@ -13,7 +13,7 @@ type EditTaskProps = {
 };
 
 function EditTask({ opened, close, task }: EditTaskProps) {
-  const { control, handleSubmit, reset } = useForm<Task>();
+  const { control, handleSubmit } = useForm<Task>();
 
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const updatedTask: Task = {
