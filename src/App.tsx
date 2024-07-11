@@ -29,7 +29,7 @@ function App() {
       <Flex gap={20}>
         <MenuBar open={open} />
         <div style={{ marginTop: 20 }}>
-          <DisplayTask tasks={tasks} />
+          <DisplayTask tasks={tasks} setTasks={setTasks} />
           <CreateTask opened={opened} close={close} />
         </div>
       </Flex>

@@ -33,10 +33,22 @@ function updateTaskInLocalStorage(task: Task) {
   localStorage.setItem("tasks", JSON.stringify(updatedTasks));
 }
 
+function deleteTaskFromLocalStorage(task: Task) {
+  const previosStoredTasks = getTasksFromLocalStorage();
+  const filteredPrevTasks = previosStoredTasks.filter(
+    (item: Task) => Number(item.id) !== Number(task.id)
+  );
+  const tasksAfterDelete = [...filteredPrevTasks];
+  localStorage.removeItem("tasks");
+  localStorage.setItem("tasks", JSON.stringify(tasksAfterDelete));
+  return tasksAfterDelete;
+}
+
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
   getLastTaskId,
   saveLastTaskId,
   updateTaskInLocalStorage,
+  deleteTaskFromLocalStorage,
 };
