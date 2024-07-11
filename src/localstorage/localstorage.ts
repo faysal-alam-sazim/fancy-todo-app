@@ -29,7 +29,6 @@ function updateTaskInLocalStorage(task: Task) {
     (item: Task) => Number(item.id) !== Number(task.id)
   );
   const updatedTasks = [...filteredPrevTasks, task];
-  localStorage.removeItem("tasks");
   localStorage.setItem("tasks", JSON.stringify(updatedTasks));
 }
 
