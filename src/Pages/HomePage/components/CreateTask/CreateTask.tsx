@@ -16,7 +16,10 @@ type CreateTaskProps = {
   opened: boolean;
   close: () => void;
   setDisplayTasks: (newTasks: Task[]) => void;
-  setHistory: (history: Task[]) => void;
+  setHistory: (history: Task[][]) => void;
+  history: Task[][];
+  setCurrStateIndex: (idx: number) => void;
+  currStateIndex: number;
 };
 
 function CreateTask({
@@ -24,6 +27,9 @@ function CreateTask({
   close,
   setDisplayTasks,
   setHistory,
+  history,
+  setCurrStateIndex,
+  currStateIndex,
 }: CreateTaskProps) {
   const {
     control,
@@ -43,13 +49,15 @@ function CreateTask({
       status: TASK_STATES.ACTIVE_STATE,
     };
 
-    const currState = getSortedTasks();
-    setHistory([...currState]);
-
     addTaskToLocalStorage(task);
     setDisplayTasks(getSortedTasks());
     saveLastTaskId(id);
     reset();
+
+    const currState = getSortedTasks();
+    const prevHistory = history.slice(0, currStateIndex + 1);
+    setHistory([...prevHistory, [...currState]]);
+    setCurrStateIndex(prevHistory.length);
   };
 
   const validateDueDate = (value: Date | null) => {

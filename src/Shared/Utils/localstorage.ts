@@ -61,6 +61,12 @@ function deleteCompletedTasksFromLocalStorage() {
   localStorage.setItem("tasks", JSON.stringify(activeTasks));
 }
 
+function setTasksAtLocalStorage(tasks: Task[]) {
+  if (tasks.length > 0) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+}
+
 function getSortedTasks() {
   const tasks = getTasksFromLocalStorage();
 
@@ -94,4 +100,5 @@ export {
   markTaskComplete,
   getSortedTasks,
   deleteCompletedTasksFromLocalStorage,
+  setTasksAtLocalStorage,
 };

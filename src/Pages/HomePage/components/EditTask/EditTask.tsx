@@ -15,6 +15,10 @@ type EditTaskProps = {
   task: Task;
   setDisplayTasks: (newTasks: Task[]) => void;
   setTaskToEdit: (task: Task | null) => void;
+  setHistory: (history: Task[][]) => void;
+  history: Task[][];
+  setCurrStateIndex: (idx: number) => void;
+  currStateIndex: number;
 };
 
 function EditTask({
@@ -23,6 +27,10 @@ function EditTask({
   task,
   setDisplayTasks,
   setTaskToEdit,
+  setHistory,
+  history,
+  setCurrStateIndex,
+  currStateIndex,
 }: EditTaskProps) {
   const {
     control,
@@ -42,6 +50,11 @@ function EditTask({
     updateTaskInLocalStorage(updatedTask);
     setDisplayTasks(getSortedTasks());
     setTaskToEdit(null);
+
+    const currState = getSortedTasks();
+    const prevHistory = history.slice(0, currStateIndex + 1);
+    setHistory([...prevHistory, [...currState]]);
+    setCurrStateIndex(prevHistory.length);
   };
 
   const validateDueDate = (value: Date | null) => {

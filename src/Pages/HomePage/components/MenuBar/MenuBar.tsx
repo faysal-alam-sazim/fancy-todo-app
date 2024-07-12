@@ -14,6 +14,8 @@ type MenuBarProps = {
   handleDueDateFilter: (date: Date) => void;
   handleResetFilter: () => void;
   clearCompletedTasks: () => void;
+  undoState: () => void;
+  currStateIndex: number;
 };
 
 function MenuBar({
@@ -23,6 +25,8 @@ function MenuBar({
   handleDueDateFilter,
   handleResetFilter,
   clearCompletedTasks,
+  undoState,
+  currStateIndex,
 }: MenuBarProps) {
   const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
     null
@@ -115,7 +119,9 @@ function MenuBar({
         >
           Clear Completed Task
         </Button>
-        <Button disabled={history.length === 0}>Undo</Button>
+        <Button onClick={undoState} disabled={currStateIndex === 0}>
+          Undo
+        </Button>
       </div>
     </nav>
   );

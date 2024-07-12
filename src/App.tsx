@@ -6,22 +6,25 @@ import dayjs from "dayjs";
 
 import CreateTask from "./Pages/HomePage/components/CreateTask/CreateTask";
 import DisplayTask from "./Pages/HomePage/components/DisplayTask/DisplayTask";
+import { Task } from "./types/Task";
 import {
+  setTasksAtLocalStorage,
   deleteCompletedTasksFromLocalStorage,
   getSortedTasks,
-} from "../src/Shared/Utils/localstorage";
-import { Task } from "./types/Task";
+} from "./Shared/Utils/localstorage";
 
 function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [displayTasks, setDisplayTasks] = useState<Task[]>([]);
-  const [history, setHistory] = useState<Task[]>([]);
+  const [history, setHistory] = useState<Task[][]>([[]]);
+  const [currStateIndex, setCurrStateIndex] = useState(0);
 
   useEffect(() => {
     const data = getSortedTasks();
     setTasks(data);
     setDisplayTasks(data);
+    setHistory([data]);
     console.log(data);
   }, []);
 
@@ -55,6 +58,17 @@ function App() {
     setDisplayTasks(updatedTasks);
   };
 
+  const undoState = () => {
+    console.log("History", history);
+    console.log(currStateIndex);
+    const prevState = history[currStateIndex - 1];
+    setDisplayTasks([...prevState]);
+    setTasksAtLocalStorage([...prevState]);
+    if (currStateIndex >= 0) {
+      setCurrStateIndex(currStateIndex - 1);
+    }
+  };
+
   return (
     <div className="container mx-auto">
       <Flex gap={20}>
@@ -65,14 +79,26 @@ function App() {
           handleDueDateFilter={handleDueDateFilter}
           handleResetFilter={handleResetFilter}
           clearCompletedTasks={clearCompletedTasks}
+          undoState={undoState}
+          currStateIndex={currStateIndex}
         />
         <div style={{ marginTop: 20 }}>
-          <DisplayTask tasks={displayTasks} setDisplayTasks={setDisplayTasks} />
+          <DisplayTask
+            tasks={displayTasks}
+            setDisplayTasks={setDisplayTasks}
+            setHistory={setHistory}
+            history={history}
+            setCurrStateIndex={setCurrStateIndex}
+            currStateIndex={currStateIndex}
+          />
           <CreateTask
             opened={opened}
             close={close}
             setDisplayTasks={setDisplayTasks}
             setHistory={setHistory}
+            history={history}
+            setCurrStateIndex={setCurrStateIndex}
+            currStateIndex={currStateIndex}
           />
         </div>
       </Flex>
