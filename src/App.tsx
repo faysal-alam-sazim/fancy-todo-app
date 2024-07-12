@@ -29,9 +29,7 @@ function App() {
   }, []);
 
   const handlePriorityFilter = (priority: string) => {
-    const filteredTasks = tasks.filter(
-      (task: Task) => task.priority === priority
-    );
+    const filteredTasks = tasks.filter((task: Task) => task.priority === priority);
     setDisplayTasks(filteredTasks);
   };
 
@@ -42,7 +40,7 @@ function App() {
 
   const handleDueDateFilter = (date: Date) => {
     const tasksMatchingDueDate = tasks.filter((task: Task) =>
-      dayjs(task.dueDate).isSame(dayjs(date))
+      dayjs(task.dueDate).isSame(dayjs(date)),
     );
     setDisplayTasks(tasksMatchingDueDate);
   };

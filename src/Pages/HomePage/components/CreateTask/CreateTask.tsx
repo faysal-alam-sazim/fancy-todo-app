@@ -49,6 +49,9 @@ function CreateTask({
       status: TASK_STATES.ACTIVE_STATE,
     };
 
+    const currState = getSortedTasks();
+    setHistory([...currState]);
+
     addTaskToLocalStorage(task);
     setDisplayTasks(getSortedTasks());
     saveLastTaskId(id);
@@ -95,11 +98,7 @@ function CreateTask({
             name="description"
             control={control}
             render={({ field }) => (
-              <Textarea
-                label="Task Details"
-                placeholder="description"
-                {...field}
-              />
+              <Textarea label="Task Details" placeholder="description" {...field} />
             )}
           />
           <Controller
@@ -109,11 +108,7 @@ function CreateTask({
               validate: validateDueDate,
             }}
             render={({ field }) => (
-              <DateInput
-                label="Due Date"
-                {...field}
-                error={errors.dueDate?.message}
-              />
+              <DateInput label="Due Date" {...field} error={errors.dueDate?.message} />
             )}
           />
 

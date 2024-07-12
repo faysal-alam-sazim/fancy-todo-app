@@ -28,9 +28,7 @@ function MenuBar({
   undoState,
   currStateIndex,
 }: MenuBarProps) {
-  const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
-    null
-  );
+  const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(null);
   const [statusRadioValue, setStatusRadioValue] = useState<string | null>(null);
 
   const [filteringDate, setFilteringDate] = useState<Date | null>(null);
@@ -112,11 +110,7 @@ function MenuBar({
           </Button>
         </Box>
 
-        <Button
-          color="red"
-          style={{ marginTop: 8 }}
-          onClick={clearCompletedTasks}
-        >
+        <Button color="red" style={{ marginTop: 8 }} onClick={clearCompletedTasks}>
           Clear Completed Task
         </Button>
         <Button onClick={undoState} disabled={currStateIndex === 0}>
