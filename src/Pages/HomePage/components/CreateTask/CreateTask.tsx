@@ -16,9 +16,15 @@ type CreateTaskProps = {
   opened: boolean;
   close: () => void;
   setDisplayTasks: (newTasks: Task[]) => void;
+  setHistory: (history: Task[]) => void;
 };
 
-function CreateTask({ opened, close, setDisplayTasks }: CreateTaskProps) {
+function CreateTask({
+  opened,
+  close,
+  setDisplayTasks,
+  setHistory,
+}: CreateTaskProps) {
   const {
     control,
     handleSubmit,
@@ -36,6 +42,9 @@ function CreateTask({ opened, close, setDisplayTasks }: CreateTaskProps) {
       priority: data.priority,
       status: TASK_STATES.ACTIVE_STATE,
     };
+
+    const currState = getSortedTasks();
+    setHistory([...currState]);
 
     addTaskToLocalStorage(task);
     setDisplayTasks(getSortedTasks());

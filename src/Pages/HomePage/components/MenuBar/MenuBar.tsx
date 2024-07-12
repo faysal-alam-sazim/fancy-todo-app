@@ -115,6 +115,7 @@ function MenuBar({
         >
           Clear Completed Task
         </Button>
+        <Button disabled={history.length === 0}>Undo</Button>
       </div>
     </nav>
   );

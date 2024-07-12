@@ -16,6 +16,7 @@ function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [displayTasks, setDisplayTasks] = useState<Task[]>([]);
+  const [history, setHistory] = useState<Task[]>([]);
 
   useEffect(() => {
     const data = getSortedTasks();
@@ -71,6 +72,7 @@ function App() {
             opened={opened}
             close={close}
             setDisplayTasks={setDisplayTasks}
+            setHistory={setHistory}
           />
         </div>
       </Flex>
