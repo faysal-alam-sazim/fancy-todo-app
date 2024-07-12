@@ -78,7 +78,6 @@ function MenuBar({
           <Radio.Group
             value={priorityRadioValue}
             onChange={handlePriorityRadioButton}
-            name="favoriteFramework"
             label="By Priority"
           >
             <Radio value="0" label="Not set" mb={4} />
@@ -90,7 +89,6 @@ function MenuBar({
           <Radio.Group
             value={statusRadioValue}
             onChange={handleStatusRadioButton}
-            name="favoriteFramework"
             label="By Status"
           >
             <Radio value={TASK_STATES.ACTIVE_STATE} label="Active" mb={4} />
