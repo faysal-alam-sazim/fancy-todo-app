@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 import CreateTask from "./Pages/HomePage/components/CreateTask/CreateTask";
 import DisplayTask from "./Pages/HomePage/components/DisplayTask/DisplayTask";
-import { getTasksFromLocalStorage } from "./localstorage/localstorage";
+import { getSortedTasks } from "../src/Shared/Utils/localstorage";
 import { Task } from "./types/Task";
 
 function App() {
@@ -13,15 +13,8 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    const data = getTasksFromLocalStorage();
-
-    if (data.length > 0) {
-      const sortedTasks = data
-        .slice()
-        .sort((a: Task, b: Task) => Number(b.priority) - Number(a.priority));
-      return setTasks(sortedTasks);
-    }
-    return setTasks(data);
+    const data = getSortedTasks();
+    setTasks(data);
   }, []);
 
   return (

@@ -1,4 +1,5 @@
-import { Task } from "../types/Task";
+import { TASK_STATES } from "../../Stores/TaskStates";
+import { Task } from "../../types/Task";
 
 function addTaskToLocalStorage(task: Task) {
   const previosStoredTasks = getTasksFromLocalStorage();
@@ -42,6 +43,39 @@ function deleteTaskFromLocalStorage(task: Task) {
   return tasksAfterDelete;
 }
 
+function markTaskComplete(task: Task) {
+  const prevTasks = getTasksFromLocalStorage();
+  const filteredTasks = prevTasks.filter(
+    (item: Task) => Number(item.id) !== Number(task.id)
+  );
+  const updatedTasks = [...filteredTasks, task];
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  return updatedTasks;
+}
+
+function getSortedTasks() {
+  const tasks = getTasksFromLocalStorage();
+
+  tasks.sort((a: Task, b: Task) => {
+    if (
+      a.status === TASK_STATES.COMPLETED &&
+      b.status !== TASK_STATES.COMPLETED
+    ) {
+      return 1;
+    }
+
+    if (
+      a.status !== TASK_STATES.COMPLETED &&
+      b.status === TASK_STATES.COMPLETED
+    ) {
+      return -1;
+    }
+
+    return Number(b.priority) - Number(a.priority);
+  });
+  return tasks;
+}
+
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
@@ -49,4 +83,6 @@ export {
   saveLastTaskId,
   updateTaskInLocalStorage,
   deleteTaskFromLocalStorage,
+  markTaskComplete,
+  getSortedTasks,
 };

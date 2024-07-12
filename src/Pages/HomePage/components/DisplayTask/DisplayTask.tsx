@@ -7,7 +7,11 @@ import Swal from "sweetalert2";
 
 import { Task } from "../../../../types/Task";
 import EditTask from "../EditTask/EditTask";
-import { deleteTaskFromLocalStorage } from "../../../../localstorage/localstorage";
+import {
+  deleteTaskFromLocalStorage,
+  markTaskComplete,
+} from "../../../../Shared/Utils/localstorage";
+import { TASK_STATES } from "../../../../Stores/TaskStates";
 
 type DisplayTaskProps = {
   tasks: Task[];
@@ -21,6 +25,12 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
   const handleEditTask = (task: Task) => {
     setTaskToEdit(task);
     open();
+  };
+
+  const handleMarkComplete = (task: Task) => {
+    task.status = TASK_STATES.COMPLETED;
+    const tasksAfterMark = markTaskComplete(task);
+    setTasks(tasksAfterMark);
   };
 
   const handleDeleteTask = (task: Task) => {
@@ -88,8 +98,16 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
             </span>
           </Text>
           <Flex justify={"space-between"} align={"center"}>
-            <Button onClick={() => handleEditTask(task)}>Edit</Button>
-            <Button color="green">Mark as complete</Button>
+            {task.status === "completed" ? (
+              <Button disabled>Completed</Button>
+            ) : (
+              <>
+                <Button onClick={() => handleEditTask(task)}>Edit</Button>
+                <Button color="green" onClick={() => handleMarkComplete(task)}>
+                  Mark as complete
+                </Button>
+              </>
+            )}
           </Flex>
         </Card>
       ))}

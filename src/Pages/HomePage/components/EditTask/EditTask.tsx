@@ -3,7 +3,7 @@ import { DateInput } from "@mantine/dates";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import "@mantine/dates/styles.css";
 
-import { updateTaskInLocalStorage } from "../../../../localstorage/localstorage";
+import { updateTaskInLocalStorage } from "../../../../Shared/Utils/localstorage";
 import { Task } from "../../../../types/Task";
 
 type EditTaskProps = {
@@ -13,7 +13,7 @@ type EditTaskProps = {
 };
 
 function EditTask({ opened, close, task }: EditTaskProps) {
-  const { control, handleSubmit, reset } = useForm<Task>();
+  const { control, handleSubmit } = useForm<Task>();
 
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const updatedTask: Task = {
@@ -22,6 +22,7 @@ function EditTask({ opened, close, task }: EditTaskProps) {
       description: data.description,
       dueDate: data.dueDate,
       priority: data.priority,
+      status: data.status,
     };
     updateTaskInLocalStorage(updatedTask);
   };
