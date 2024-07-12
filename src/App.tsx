@@ -6,7 +6,10 @@ import dayjs from "dayjs";
 
 import CreateTask from "./Pages/HomePage/components/CreateTask/CreateTask";
 import DisplayTask from "./Pages/HomePage/components/DisplayTask/DisplayTask";
-import { getSortedTasks } from "../src/Shared/Utils/localstorage";
+import {
+  deleteCompletedTasksFromLocalStorage,
+  getSortedTasks,
+} from "../src/Shared/Utils/localstorage";
 import { Task } from "./types/Task";
 
 function App() {
@@ -44,6 +47,13 @@ function App() {
     setDisplayTasks(tasks);
   };
 
+  const clearCompletedTasks = () => {
+    deleteCompletedTasksFromLocalStorage();
+    const updatedTasks = getSortedTasks();
+    setTasks(updatedTasks);
+    setDisplayTasks(updatedTasks);
+  };
+
   return (
     <div className="container mx-auto">
       <Flex gap={20}>
@@ -53,6 +63,7 @@ function App() {
           handleStatusFilter={handleStatusFilter}
           handleDueDateFilter={handleDueDateFilter}
           handleResetFilter={handleResetFilter}
+          clearCompletedTasks={clearCompletedTasks}
         />
         <div style={{ marginTop: 20 }}>
           <DisplayTask tasks={displayTasks} setTasks={setDisplayTasks} />
