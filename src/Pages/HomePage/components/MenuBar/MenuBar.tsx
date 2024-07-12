@@ -12,6 +12,7 @@ type MenuBarProps = {
   handlePriorityFilter: (priority: string) => void;
   handleStatusFilter: (status: string) => void;
   handleDueDateFilter: (date: Date) => void;
+  handleResetFilter: () => void;
 };
 
 function MenuBar({
@@ -19,6 +20,7 @@ function MenuBar({
   handlePriorityFilter,
   handleStatusFilter,
   handleDueDateFilter,
+  handleResetFilter,
 }: MenuBarProps) {
   const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
     null
@@ -53,6 +55,14 @@ function MenuBar({
     }
   };
 
+  const handleResetFilterButton = () => {
+    setPriorityRadioValue(null);
+    setStatusRadioValue(null);
+    setFilteringDate(null);
+
+    handleResetFilter();
+  };
+
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
@@ -64,7 +74,7 @@ function MenuBar({
           <IconFilter className={classes.linkIcon} stroke={1.5} />
           <span>Filter</span>
         </Text>
-        <Box ml={30}>
+        <Box ml={30} mb={20}>
           <Radio.Group
             value={priorityRadioValue}
             onChange={handlePriorityRadioButton}
@@ -75,7 +85,6 @@ function MenuBar({
             <Radio value="1" label="Low" mb={4} />
             <Radio value="2" label="Medium" mb={4} />
             <Radio value="3" label="High" mb={4} />
-            <Radio value="reset" label="Reset" mb={4} />
           </Radio.Group>
 
           <Radio.Group
@@ -94,7 +103,11 @@ function MenuBar({
             onChange={handleDueDateInput}
             inputSize="xs"
           />
+          <Button color="orange" mt={10} onClick={handleResetFilterButton}>
+            Reset Filters
+          </Button>
         </Box>
+
         <Button color="red" style={{ marginTop: 8 }}>
           Clear Completed Task
         </Button>

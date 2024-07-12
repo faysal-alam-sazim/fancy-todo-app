@@ -22,14 +22,10 @@ function App() {
   }, []);
 
   const handlePriorityFilter = (priority: string) => {
-    if (priority !== "reset") {
-      const filteredTasks = tasks.filter(
-        (task: Task) => task.priority === priority
-      );
-      setDisplayTasks(filteredTasks);
-    } else {
-      setDisplayTasks(tasks);
-    }
+    const filteredTasks = tasks.filter(
+      (task: Task) => task.priority === priority
+    );
+    setDisplayTasks(filteredTasks);
   };
 
   const handleStatusFilter = (status: string) => {
@@ -44,6 +40,10 @@ function App() {
     setDisplayTasks(tasksMatchingDueDate);
   };
 
+  const handleResetFilter = () => {
+    setDisplayTasks(tasks);
+  };
+
   return (
     <div className="container mx-auto">
       <Flex gap={20}>
@@ -52,6 +52,7 @@ function App() {
           handlePriorityFilter={handlePriorityFilter}
           handleStatusFilter={handleStatusFilter}
           handleDueDateFilter={handleDueDateFilter}
+          handleResetFilter={handleResetFilter}
         />
         <div style={{ marginTop: 20 }}>
           <DisplayTask tasks={displayTasks} setTasks={setDisplayTasks} />
