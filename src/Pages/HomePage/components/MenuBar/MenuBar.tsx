@@ -13,6 +13,7 @@ type MenuBarProps = {
   handleStatusFilter: (status: string) => void;
   handleDueDateFilter: (date: Date) => void;
   handleResetFilter: () => void;
+  clearCompletedTasks: () => void;
 };
 
 function MenuBar({
@@ -21,6 +22,7 @@ function MenuBar({
   handleStatusFilter,
   handleDueDateFilter,
   handleResetFilter,
+  clearCompletedTasks,
 }: MenuBarProps) {
   const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
     null
@@ -106,7 +108,11 @@ function MenuBar({
           </Button>
         </Box>
 
-        <Button color="red" style={{ marginTop: 8 }}>
+        <Button
+          color="red"
+          style={{ marginTop: 8 }}
+          onClick={clearCompletedTasks}
+        >
           Clear Completed Task
         </Button>
       </div>
