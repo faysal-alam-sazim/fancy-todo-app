@@ -9,6 +9,7 @@ import { Task } from "../../../../types/Task";
 import EditTask from "../EditTask/EditTask";
 import {
   deleteTaskFromLocalStorage,
+  getSortedTasks,
   markTaskComplete,
 } from "../../../../Shared/Utils/localstorage";
 import { TASK_STATES } from "../../../../Stores/TaskStates";
@@ -16,9 +17,20 @@ import { TASK_STATES } from "../../../../Stores/TaskStates";
 type DisplayTaskProps = {
   tasks: Task[];
   setDisplayTasks: (newTasks: Task[]) => void;
+  setHistory: (history: Task[][]) => void;
+  history: Task[][];
+  setCurrStateIndex: (idx: number) => void;
+  currStateIndex: number;
 };
 
-function DisplayTask({ tasks, setDisplayTasks }: DisplayTaskProps) {
+function DisplayTask({
+  tasks,
+  setDisplayTasks,
+  setHistory,
+  history,
+  setCurrStateIndex,
+  currStateIndex,
+}: DisplayTaskProps) {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [opened, { open, close }] = useDisclosure();
 
@@ -34,8 +46,6 @@ function DisplayTask({ tasks, setDisplayTasks }: DisplayTaskProps) {
   };
 
   const handleDeleteTask = (task: Task) => {
-    const tasksAfterDelete = deleteTaskFromLocalStorage(task);
-
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -46,7 +56,14 @@ function DisplayTask({ tasks, setDisplayTasks }: DisplayTaskProps) {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
+        const tasksAfterDelete = deleteTaskFromLocalStorage(task);
         setDisplayTasks(tasksAfterDelete);
+
+        const currState = getSortedTasks();
+        const prevHistory = history.slice(0, currStateIndex + 1);
+        setHistory([...prevHistory, [...currState]]);
+        setCurrStateIndex(prevHistory.length);
+
         Swal.fire({
           title: "Deleted!",
           text: "Your task has been deleted.",
@@ -94,9 +111,7 @@ function DisplayTask({ tasks, setDisplayTasks }: DisplayTaskProps) {
           <Text size="sm" c="dimmed" mb={4}>
             Due Date:
             <span className="ml-2">
-              {task.dueDate
-                ? dayjs(task.dueDate).format("DD MMMM YYYY")
-                : "Not set"}
+              {task.dueDate ? dayjs(task.dueDate).format("DD MMMM YYYY") : "Not set"}
             </span>
           </Text>
           <Flex justify={"space-between"} align={"center"}>
@@ -120,6 +135,10 @@ function DisplayTask({ tasks, setDisplayTasks }: DisplayTaskProps) {
           task={taskToEdit}
           setDisplayTasks={setDisplayTasks}
           setTaskToEdit={setTaskToEdit}
+          setHistory={setHistory}
+          history={history}
+          setCurrStateIndex={setCurrStateIndex}
+          currStateIndex={currStateIndex}
         />
       )}
     </Flex>

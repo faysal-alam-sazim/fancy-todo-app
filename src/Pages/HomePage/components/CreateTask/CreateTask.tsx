@@ -16,9 +16,21 @@ type CreateTaskProps = {
   opened: boolean;
   close: () => void;
   setDisplayTasks: (newTasks: Task[]) => void;
+  setHistory: (history: Task[][]) => void;
+  history: Task[][];
+  setCurrStateIndex: (idx: number) => void;
+  currStateIndex: number;
 };
 
-function CreateTask({ opened, close, setDisplayTasks }: CreateTaskProps) {
+function CreateTask({
+  opened,
+  close,
+  setDisplayTasks,
+  setHistory,
+  history,
+  setCurrStateIndex,
+  currStateIndex,
+}: CreateTaskProps) {
   const {
     control,
     handleSubmit,
@@ -41,6 +53,11 @@ function CreateTask({ opened, close, setDisplayTasks }: CreateTaskProps) {
     setDisplayTasks(getSortedTasks());
     saveLastTaskId(id);
     reset();
+
+    const currState = getSortedTasks();
+    const prevHistory = history.slice(0, currStateIndex + 1);
+    setHistory([...prevHistory, [...currState]]);
+    setCurrStateIndex(prevHistory.length);
   };
 
   const validateDueDate = (value: Date | null) => {
