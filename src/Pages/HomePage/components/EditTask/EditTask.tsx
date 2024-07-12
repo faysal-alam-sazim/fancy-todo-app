@@ -13,7 +13,11 @@ type EditTaskProps = {
 };
 
 function EditTask({ opened, close, task }: EditTaskProps) {
-  const { control, handleSubmit } = useForm<Task>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<Task>({ mode: "onBlur" });
 
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const updatedTask: Task = {
@@ -27,6 +31,16 @@ function EditTask({ opened, close, task }: EditTaskProps) {
     updateTaskInLocalStorage(updatedTask);
   };
 
+  const validateDueDate = (value: Date | null) => {
+    const currentDate = new Date();
+
+    if (value && value < currentDate) {
+      return "Due date cannot be in the past";
+    }
+
+    return true;
+  };
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Edit Task" centered>
@@ -37,9 +51,16 @@ function EditTask({ opened, close, task }: EditTaskProps) {
           <Controller
             name="title"
             control={control}
+            rules={{ required: "Title is required" }}
             defaultValue={task.title}
             render={({ field }) => (
-              <TextInput label="Task Title" placeholder="title" {...field} />
+              <TextInput
+                label="Task Title"
+                placeholder="title"
+                {...field}
+                error={errors.title?.message}
+                withAsterisk
+              />
             )}
           />
           <Controller
@@ -57,8 +78,17 @@ function EditTask({ opened, close, task }: EditTaskProps) {
           <Controller
             name="dueDate"
             control={control}
+            rules={{
+              validate: validateDueDate,
+            }}
             defaultValue={task.dueDate ? new Date(task.dueDate) : null}
-            render={({ field }) => <DateInput label="Due Date" {...field} />}
+            render={({ field }) => (
+              <DateInput
+                label="Due Date"
+                {...field}
+                error={errors.dueDate?.message}
+              />
+            )}
           />
 
           <Controller
@@ -79,7 +109,7 @@ function EditTask({ opened, close, task }: EditTaskProps) {
               />
             )}
           />
-          <Button type="submit" onClick={close}>
+          <Button type="submit" onClick={close} disabled={!isValid}>
             Update
           </Button>
         </form>
