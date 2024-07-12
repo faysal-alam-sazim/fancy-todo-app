@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Group, Text, Button, Box, Radio } from "@mantine/core";
+import { Group, Text, Button, Box, Radio, Flex } from "@mantine/core";
 import { IconFilter } from "@tabler/icons-react";
 import { DatePickerInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
 
 import classes from "./MenuBar.module.css";
 import { TASK_STATES } from "../../../../Stores/TaskStates";
+import { Task } from "../../../../types/Task";
 
 type MenuBarProps = {
   open: () => void;
@@ -15,7 +16,9 @@ type MenuBarProps = {
   handleResetFilter: () => void;
   clearCompletedTasks: () => void;
   undoState: () => void;
+  redoState: () => void;
   currStateIndex: number;
+  history: Task[][];
 };
 
 function MenuBar({
@@ -26,11 +29,11 @@ function MenuBar({
   handleResetFilter,
   clearCompletedTasks,
   undoState,
+  redoState,
   currStateIndex,
+  history,
 }: MenuBarProps) {
-  const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
-    null
-  );
+  const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(null);
   const [statusRadioValue, setStatusRadioValue] = useState<string | null>(null);
 
   const [filteringDate, setFilteringDate] = useState<Date | null>(null);
@@ -112,16 +115,17 @@ function MenuBar({
           </Button>
         </Box>
 
-        <Button
-          color="red"
-          style={{ marginTop: 8 }}
-          onClick={clearCompletedTasks}
-        >
+        <Button color="red" style={{ marginTop: 8 }} onClick={clearCompletedTasks}>
           Clear Completed Task
         </Button>
-        <Button onClick={undoState} disabled={currStateIndex === 0}>
-          Undo
-        </Button>
+        <Flex justify={"space-between"} mt={10}>
+          <Button onClick={undoState} disabled={currStateIndex === 0}>
+            Undo
+          </Button>
+          <Button onClick={redoState} disabled={currStateIndex + 1 >= history.length}>
+            Redo
+          </Button>
+        </Flex>
       </div>
     </nav>
   );

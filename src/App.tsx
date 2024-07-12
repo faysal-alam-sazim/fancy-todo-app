@@ -29,9 +29,7 @@ function App() {
   }, []);
 
   const handlePriorityFilter = (priority: string) => {
-    const filteredTasks = tasks.filter(
-      (task: Task) => task.priority === priority
-    );
+    const filteredTasks = tasks.filter((task: Task) => task.priority === priority);
     setDisplayTasks(filteredTasks);
   };
 
@@ -42,7 +40,7 @@ function App() {
 
   const handleDueDateFilter = (date: Date) => {
     const tasksMatchingDueDate = tasks.filter((task: Task) =>
-      dayjs(task.dueDate).isSame(dayjs(date))
+      dayjs(task.dueDate).isSame(dayjs(date)),
     );
     setDisplayTasks(tasksMatchingDueDate);
   };
@@ -59,13 +57,20 @@ function App() {
   };
 
   const undoState = () => {
-    console.log("History", history);
-    console.log(currStateIndex);
     const prevState = history[currStateIndex - 1];
     setDisplayTasks([...prevState]);
     setTasksAtLocalStorage([...prevState]);
     if (currStateIndex >= 0) {
       setCurrStateIndex(currStateIndex - 1);
+    }
+  };
+
+  const redoState = () => {
+    const fwdState = history[currStateIndex + 1];
+    setDisplayTasks([...fwdState]);
+    setTasksAtLocalStorage([...fwdState]);
+    if (currStateIndex < history.length) {
+      setCurrStateIndex(currStateIndex + 1);
     }
   };
 
@@ -80,6 +85,8 @@ function App() {
           handleResetFilter={handleResetFilter}
           clearCompletedTasks={clearCompletedTasks}
           undoState={undoState}
+          redoState={redoState}
+          history={history}
           currStateIndex={currStateIndex}
         />
         <div style={{ marginTop: 20 }}>
