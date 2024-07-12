@@ -49,9 +49,6 @@ function CreateTask({
       status: TASK_STATES.ACTIVE_STATE,
     };
 
-    const currState = getSortedTasks();
-    setHistory([...currState]);
-
     addTaskToLocalStorage(task);
     setDisplayTasks(getSortedTasks());
     saveLastTaskId(id);
