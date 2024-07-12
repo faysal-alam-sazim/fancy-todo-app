@@ -94,7 +94,9 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
           <Text size="sm" c="dimmed" mb={4}>
             Due Date:
             <span className="ml-2">
-              {task.dueDate ? dayjs(task.dueDate).toString() : "Not set"}
+              {task.dueDate
+                ? dayjs(task.dueDate).format("DD MMMM YYYY")
+                : "Not set"}
             </span>
           </Text>
           <Flex justify={"space-between"} align={"center"}>
