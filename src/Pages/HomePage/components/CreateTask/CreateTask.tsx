@@ -7,6 +7,7 @@ import { Task } from "../../../../types/Task";
 import {
   addTaskToLocalStorage,
   getLastTaskId,
+  getSortedTasks,
   saveLastTaskId,
 } from "../../../../Shared/Utils/localstorage";
 import { TASK_STATES } from "../../../../Stores/TaskStates";
@@ -14,10 +15,16 @@ import { TASK_STATES } from "../../../../Stores/TaskStates";
 type CreateTaskProps = {
   opened: boolean;
   close: () => void;
+  setDisplayTasks: (newTasks: Task[]) => void;
 };
 
-function CreateTask({ opened, close }: CreateTaskProps) {
-  const { control, handleSubmit, reset } = useForm<Task>();
+function CreateTask({ opened, close, setDisplayTasks }: CreateTaskProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<Task>({ mode: "onBlur" });
 
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const id = getLastTaskId() + 1;
@@ -31,8 +38,19 @@ function CreateTask({ opened, close }: CreateTaskProps) {
     };
 
     addTaskToLocalStorage(task);
+    setDisplayTasks(getSortedTasks());
     saveLastTaskId(id);
     reset();
+  };
+
+  const validateDueDate = (value: Date | null) => {
+    const currentDate = new Date();
+
+    if (value && value < currentDate) {
+      return "Due date cannot be in the past";
+    }
+
+    return true;
   };
 
   return (
@@ -45,8 +63,15 @@ function CreateTask({ opened, close }: CreateTaskProps) {
           <Controller
             name="title"
             control={control}
+            rules={{ required: "Title is required" }}
             render={({ field }) => (
-              <TextInput label="Task Title" placeholder="title" {...field} />
+              <TextInput
+                label="Task Title"
+                placeholder="title"
+                {...field}
+                error={errors.title?.message}
+                withAsterisk
+              />
             )}
           />
           <Controller
@@ -63,7 +88,16 @@ function CreateTask({ opened, close }: CreateTaskProps) {
           <Controller
             name="dueDate"
             control={control}
-            render={({ field }) => <DateInput label="Due Date" {...field} />}
+            rules={{
+              validate: validateDueDate,
+            }}
+            render={({ field }) => (
+              <DateInput
+                label="Due Date"
+                {...field}
+                error={errors.dueDate?.message}
+              />
+            )}
           />
 
           <Controller
@@ -83,7 +117,7 @@ function CreateTask({ opened, close }: CreateTaskProps) {
               />
             )}
           />
-          <Button type="submit" onClick={close}>
+          <Button type="submit" onClick={close} disabled={!isValid}>
             Create
           </Button>
         </form>

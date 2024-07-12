@@ -15,10 +15,10 @@ import { TASK_STATES } from "../../../../Stores/TaskStates";
 
 type DisplayTaskProps = {
   tasks: Task[];
-  setTasks: (newTasks: Task[]) => void;
+  setDisplayTasks: (newTasks: Task[]) => void;
 };
 
-function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
+function DisplayTask({ tasks, setDisplayTasks }: DisplayTaskProps) {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [opened, { open, close }] = useDisclosure();
 
@@ -30,7 +30,7 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
   const handleMarkComplete = (task: Task) => {
     task.status = TASK_STATES.COMPLETED;
     const tasksAfterMark = markTaskComplete(task);
-    setTasks(tasksAfterMark);
+    setDisplayTasks(tasksAfterMark);
   };
 
   const handleDeleteTask = (task: Task) => {
@@ -46,7 +46,7 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setTasks(tasksAfterDelete);
+        setDisplayTasks(tasksAfterDelete);
         Swal.fire({
           title: "Deleted!",
           text: "Your task has been deleted.",
@@ -114,7 +114,13 @@ function DisplayTask({ tasks, setTasks }: DisplayTaskProps) {
         </Card>
       ))}
       {taskToEdit && (
-        <EditTask opened={opened} close={close} task={taskToEdit} />
+        <EditTask
+          opened={opened}
+          close={close}
+          task={taskToEdit}
+          setDisplayTasks={setDisplayTasks}
+          setTaskToEdit={setTaskToEdit}
+        />
       )}
     </Flex>
   );

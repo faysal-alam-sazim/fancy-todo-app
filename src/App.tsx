@@ -66,8 +66,12 @@ function App() {
           clearCompletedTasks={clearCompletedTasks}
         />
         <div style={{ marginTop: 20 }}>
-          <DisplayTask tasks={displayTasks} setTasks={setDisplayTasks} />
-          <CreateTask opened={opened} close={close} />
+          <DisplayTask tasks={displayTasks} setDisplayTasks={setDisplayTasks} />
+          <CreateTask
+            opened={opened}
+            close={close}
+            setDisplayTasks={setDisplayTasks}
+          />
         </div>
       </Flex>
     </div>

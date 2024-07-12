@@ -3,17 +3,32 @@ import { DateInput } from "@mantine/dates";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import "@mantine/dates/styles.css";
 
-import { updateTaskInLocalStorage } from "../../../../Shared/Utils/localstorage";
+import {
+  getSortedTasks,
+  updateTaskInLocalStorage,
+} from "../../../../Shared/Utils/localstorage";
 import { Task } from "../../../../types/Task";
 
 type EditTaskProps = {
   opened: boolean;
   close: () => void;
   task: Task;
+  setDisplayTasks: (newTasks: Task[]) => void;
+  setTaskToEdit: (task: Task | null) => void;
 };
 
-function EditTask({ opened, close, task }: EditTaskProps) {
-  const { control, handleSubmit } = useForm<Task>();
+function EditTask({
+  opened,
+  close,
+  task,
+  setDisplayTasks,
+  setTaskToEdit,
+}: EditTaskProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<Task>({ mode: "onBlur" });
 
   const onSubmit: SubmitHandler<Task> = (data: Task) => {
     const updatedTask: Task = {
@@ -25,6 +40,18 @@ function EditTask({ opened, close, task }: EditTaskProps) {
       status: data.status,
     };
     updateTaskInLocalStorage(updatedTask);
+    setDisplayTasks(getSortedTasks());
+    setTaskToEdit(null);
+  };
+
+  const validateDueDate = (value: Date | null) => {
+    const currentDate = new Date();
+
+    if (value && value < currentDate) {
+      return "Due date cannot be in the past";
+    }
+
+    return true;
   };
 
   return (
@@ -37,9 +64,16 @@ function EditTask({ opened, close, task }: EditTaskProps) {
           <Controller
             name="title"
             control={control}
+            rules={{ required: "Title is required" }}
             defaultValue={task.title}
             render={({ field }) => (
-              <TextInput label="Task Title" placeholder="title" {...field} />
+              <TextInput
+                label="Task Title"
+                placeholder="title"
+                {...field}
+                error={errors.title?.message}
+                withAsterisk
+              />
             )}
           />
           <Controller
@@ -57,8 +91,17 @@ function EditTask({ opened, close, task }: EditTaskProps) {
           <Controller
             name="dueDate"
             control={control}
+            rules={{
+              validate: validateDueDate,
+            }}
             defaultValue={task.dueDate ? new Date(task.dueDate) : null}
-            render={({ field }) => <DateInput label="Due Date" {...field} />}
+            render={({ field }) => (
+              <DateInput
+                label="Due Date"
+                {...field}
+                error={errors.dueDate?.message}
+              />
+            )}
           />
 
           <Controller
@@ -79,7 +122,7 @@ function EditTask({ opened, close, task }: EditTaskProps) {
               />
             )}
           />
-          <Button type="submit" onClick={close}>
+          <Button type="submit" onClick={close} disabled={!isValid}>
             Update
           </Button>
         </form>
