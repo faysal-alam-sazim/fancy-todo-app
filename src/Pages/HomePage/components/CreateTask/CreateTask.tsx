@@ -7,6 +7,7 @@ import { Task } from "../../../../types/Task";
 import {
   addTaskToLocalStorage,
   getLastTaskId,
+  getSortedTasks,
   saveLastTaskId,
 } from "../../../../Shared/Utils/localstorage";
 import { TASK_STATES } from "../../../../Stores/TaskStates";
@@ -14,9 +15,10 @@ import { TASK_STATES } from "../../../../Stores/TaskStates";
 type CreateTaskProps = {
   opened: boolean;
   close: () => void;
+  setDisplayTasks: (newTasks: Task[]) => void;
 };
 
-function CreateTask({ opened, close }: CreateTaskProps) {
+function CreateTask({ opened, close, setDisplayTasks }: CreateTaskProps) {
   const {
     control,
     handleSubmit,
@@ -36,6 +38,7 @@ function CreateTask({ opened, close }: CreateTaskProps) {
     };
 
     addTaskToLocalStorage(task);
+    setDisplayTasks(getSortedTasks());
     saveLastTaskId(id);
     reset();
   };
