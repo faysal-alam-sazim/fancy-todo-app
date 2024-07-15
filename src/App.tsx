@@ -16,49 +16,52 @@ import {
 function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [displayTasks, setDisplayTasks] = useState<Task[]>([]);
   const [history, setHistory] = useState<Task[][]>([[]]);
   const [currStateIndex, setCurrStateIndex] = useState(0);
 
   useEffect(() => {
     const data = getSortedTasks();
     setTasks(data);
-    setDisplayTasks(data);
     setHistory([data]);
-    console.log(data);
   }, []);
 
   const handlePriorityFilter = (priority: string) => {
-    const filteredTasks = tasks.filter((task: Task) => task.priority === priority);
-    setDisplayTasks(filteredTasks);
+    const allTasks = getSortedTasks();
+    const filteredTasks = allTasks.filter((task: Task) => task.priority === priority);
+    setTasks(filteredTasks);
   };
 
   const handleStatusFilter = (status: string) => {
-    const filteredTasks = tasks.filter((task: Task) => task.status === status);
-    setDisplayTasks(filteredTasks);
+    const allTasks = getSortedTasks();
+    const filteredTasks = allTasks.filter((task: Task) => task.status === status);
+    setTasks(filteredTasks);
   };
 
   const handleDueDateFilter = (date: Date) => {
-    const tasksMatchingDueDate = tasks.filter((task: Task) =>
+    const allTasks = getSortedTasks();
+    const tasksMatchingDueDate = allTasks.filter((task: Task) =>
       dayjs(task.dueDate).isSame(dayjs(date)),
     );
-    setDisplayTasks(tasksMatchingDueDate);
+    setTasks(tasksMatchingDueDate);
   };
 
   const handleResetFilter = () => {
-    setDisplayTasks(tasks);
+    setTasks(tasks);
   };
 
   const clearCompletedTasks = () => {
     deleteCompletedTasksFromLocalStorage();
     const updatedTasks = getSortedTasks();
     setTasks(updatedTasks);
-    setDisplayTasks(updatedTasks);
+
+    const prevHistory = history.slice(0, currStateIndex + 1);
+    setHistory([...prevHistory, [...updatedTasks]]);
+    setCurrStateIndex(prevHistory.length);
   };
 
   const undoState = () => {
     const prevState = history[currStateIndex - 1];
-    setDisplayTasks([...prevState]);
+    setTasks([...prevState]);
     setTasksAtLocalStorage([...prevState]);
     if (currStateIndex >= 0) {
       setCurrStateIndex(currStateIndex - 1);
@@ -67,7 +70,7 @@ function App() {
 
   const redoState = () => {
     const fwdState = history[currStateIndex + 1];
-    setDisplayTasks([...fwdState]);
+    setTasks([...fwdState]);
     setTasksAtLocalStorage([...fwdState]);
     if (currStateIndex < history.length) {
       setCurrStateIndex(currStateIndex + 1);
@@ -91,8 +94,8 @@ function App() {
         />
         <div style={{ marginTop: 20 }}>
           <DisplayTask
-            tasks={displayTasks}
-            setDisplayTasks={setDisplayTasks}
+            tasks={tasks}
+            setTasks={setTasks}
             setHistory={setHistory}
             history={history}
             setCurrStateIndex={setCurrStateIndex}
@@ -101,7 +104,7 @@ function App() {
           <CreateTask
             opened={opened}
             close={close}
-            setDisplayTasks={setDisplayTasks}
+            setTasks={setTasks}
             setHistory={setHistory}
             history={history}
             setCurrStateIndex={setCurrStateIndex}

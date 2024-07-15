@@ -27,7 +27,7 @@ function getLastTaskId() {
 function updateTaskInLocalStorage(task: Task) {
   const previosStoredTasks = getTasksFromLocalStorage();
   const filteredPrevTasks = previosStoredTasks.filter(
-    (item: Task) => Number(item.id) !== Number(task.id)
+    (item: Task) => Number(item.id) !== Number(task.id),
   );
   const updatedTasks = [...filteredPrevTasks, task];
   localStorage.setItem("tasks", JSON.stringify(updatedTasks));
@@ -36,7 +36,7 @@ function updateTaskInLocalStorage(task: Task) {
 function deleteTaskFromLocalStorage(task: Task) {
   const previosStoredTasks = getTasksFromLocalStorage();
   const filteredPrevTasks = previosStoredTasks.filter(
-    (item: Task) => Number(item.id) !== Number(task.id)
+    (item: Task) => Number(item.id) !== Number(task.id),
   );
   const tasksAfterDelete = [...filteredPrevTasks];
   localStorage.setItem("tasks", JSON.stringify(tasksAfterDelete));
@@ -45,19 +45,14 @@ function deleteTaskFromLocalStorage(task: Task) {
 
 function markTaskComplete(task: Task) {
   const prevTasks = getTasksFromLocalStorage();
-  const filteredTasks = prevTasks.filter(
-    (item: Task) => Number(item.id) !== Number(task.id)
-  );
+  const filteredTasks = prevTasks.filter((item: Task) => Number(item.id) !== Number(task.id));
   const updatedTasks = [...filteredTasks, task];
   localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-  return updatedTasks;
 }
 
 function deleteCompletedTasksFromLocalStorage() {
   const prevTasks = getTasksFromLocalStorage();
-  const activeTasks = prevTasks.filter(
-    (task: Task) => task.status === TASK_STATES.ACTIVE_STATE
-  );
+  const activeTasks = prevTasks.filter((task: Task) => task.status === TASK_STATES.ACTIVE_STATE);
   localStorage.setItem("tasks", JSON.stringify(activeTasks));
 }
 
@@ -71,17 +66,11 @@ function getSortedTasks() {
   const tasks = getTasksFromLocalStorage();
 
   tasks.sort((a: Task, b: Task) => {
-    if (
-      a.status === TASK_STATES.COMPLETED &&
-      b.status !== TASK_STATES.COMPLETED
-    ) {
+    if (a.status === TASK_STATES.COMPLETED && b.status !== TASK_STATES.COMPLETED) {
       return 1;
     }
 
-    if (
-      a.status !== TASK_STATES.COMPLETED &&
-      b.status === TASK_STATES.COMPLETED
-    ) {
+    if (a.status !== TASK_STATES.COMPLETED && b.status === TASK_STATES.COMPLETED) {
       return -1;
     }
 

@@ -16,7 +16,7 @@ import { TASK_STATES } from "../../../../Stores/TaskStates";
 
 type DisplayTaskProps = {
   tasks: Task[];
-  setDisplayTasks: (newTasks: Task[]) => void;
+  setTasks: (newTasks: Task[]) => void;
   setHistory: (history: Task[][]) => void;
   history: Task[][];
   setCurrStateIndex: (idx: number) => void;
@@ -25,7 +25,7 @@ type DisplayTaskProps = {
 
 function DisplayTask({
   tasks,
-  setDisplayTasks,
+  setTasks,
   setHistory,
   history,
   setCurrStateIndex,
@@ -41,14 +41,18 @@ function DisplayTask({
 
   const handleMarkComplete = (task: Task) => {
     task.status = TASK_STATES.COMPLETED;
-    const tasksAfterMark = markTaskComplete(task);
-    setDisplayTasks(tasksAfterMark);
+    markTaskComplete(task);
+    setTasks(getSortedTasks());
+
+    const currState = getSortedTasks();
+    const prevHistory = history.slice(0, currStateIndex + 1);
+    setHistory([...prevHistory, [...currState]]);
+    setCurrStateIndex(prevHistory.length);
   };
 
   const handleDeleteTask = (task: Task) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -57,7 +61,7 @@ function DisplayTask({
     }).then((result) => {
       if (result.isConfirmed) {
         const tasksAfterDelete = deleteTaskFromLocalStorage(task);
-        setDisplayTasks(tasksAfterDelete);
+        setTasks(tasksAfterDelete);
 
         const currState = getSortedTasks();
         const prevHistory = history.slice(0, currStateIndex + 1);
@@ -115,7 +119,7 @@ function DisplayTask({
             </span>
           </Text>
           <Flex justify={"space-between"} align={"center"}>
-            {task.status === "completed" ? (
+            {task.status === TASK_STATES.COMPLETED ? (
               <Button disabled>Completed</Button>
             ) : (
               <>
@@ -133,7 +137,7 @@ function DisplayTask({
           opened={opened}
           close={close}
           task={taskToEdit}
-          setDisplayTasks={setDisplayTasks}
+          setTasks={setTasks}
           setTaskToEdit={setTaskToEdit}
           setHistory={setHistory}
           history={history}
