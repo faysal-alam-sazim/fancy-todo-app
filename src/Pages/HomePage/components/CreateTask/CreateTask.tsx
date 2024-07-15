@@ -15,7 +15,7 @@ import { TASK_STATES } from "../../../../Stores/TaskStates";
 type CreateTaskProps = {
   opened: boolean;
   close: () => void;
-  setDisplayTasks: (newTasks: Task[]) => void;
+  setTasks: (newTasks: Task[]) => void;
   setHistory: (history: Task[][]) => void;
   history: Task[][];
   setCurrStateIndex: (idx: number) => void;
@@ -25,7 +25,7 @@ type CreateTaskProps = {
 function CreateTask({
   opened,
   close,
-  setDisplayTasks,
+  setTasks,
   setHistory,
   history,
   setCurrStateIndex,
@@ -50,7 +50,7 @@ function CreateTask({
     };
 
     addTaskToLocalStorage(task);
-    setDisplayTasks(getSortedTasks());
+    setTasks(getSortedTasks());
     saveLastTaskId(id);
     reset();
 

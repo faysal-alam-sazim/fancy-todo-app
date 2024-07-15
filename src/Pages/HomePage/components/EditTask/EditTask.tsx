@@ -3,17 +3,14 @@ import { DateInput } from "@mantine/dates";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import "@mantine/dates/styles.css";
 
-import {
-  getSortedTasks,
-  updateTaskInLocalStorage,
-} from "../../../../Shared/Utils/localstorage";
+import { getSortedTasks, updateTaskInLocalStorage } from "../../../../Shared/Utils/localstorage";
 import { Task } from "../../../../types/Task";
 
 type EditTaskProps = {
   opened: boolean;
   close: () => void;
   task: Task;
-  setDisplayTasks: (newTasks: Task[]) => void;
+  setTasks: (newTasks: Task[]) => void;
   setTaskToEdit: (task: Task | null) => void;
   setHistory: (history: Task[][]) => void;
   history: Task[][];
@@ -25,7 +22,7 @@ function EditTask({
   opened,
   close,
   task,
-  setDisplayTasks,
+  setTasks,
   setTaskToEdit,
   setHistory,
   history,
@@ -45,10 +42,12 @@ function EditTask({
       description: data.description,
       dueDate: data.dueDate,
       priority: data.priority,
-      status: data.status,
+      status: task.status,
     };
+
+    console.log("Updated Task", updatedTask);
     updateTaskInLocalStorage(updatedTask);
-    setDisplayTasks(getSortedTasks());
+    setTasks(getSortedTasks());
     setTaskToEdit(null);
 
     const currState = getSortedTasks();
@@ -94,11 +93,7 @@ function EditTask({
             control={control}
             defaultValue={task.description}
             render={({ field }) => (
-              <Textarea
-                label="Task Details"
-                placeholder="description"
-                {...field}
-              />
+              <Textarea label="Task Details" placeholder="description" {...field} />
             )}
           />
           <Controller
@@ -109,11 +104,7 @@ function EditTask({
             }}
             defaultValue={task.dueDate ? new Date(task.dueDate) : null}
             render={({ field }) => (
-              <DateInput
-                label="Due Date"
-                {...field}
-                error={errors.dueDate?.message}
-              />
+              <DateInput label="Due Date" {...field} error={errors.dueDate?.message} />
             )}
           />
 
