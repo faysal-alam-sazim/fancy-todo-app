@@ -27,7 +27,7 @@ export function HeroBanner() {
           top of your responsibilities and achieve more every day.
         </Text>
 
-        <Link href={"/todo"}>
+        <Link href={"/login"}>
           <Button
             variant="gradient"
             size="xl"

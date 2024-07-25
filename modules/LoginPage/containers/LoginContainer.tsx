@@ -1,8 +1,9 @@
-import { Box, Container, Flex, Image, Title } from "@mantine/core";
 import React from "react";
+import { Box, Flex, Image } from "@mantine/core";
+
 import LoginForm from "../components/LoginForm/LoginForm";
 
-function LoginPageContainer() {
+function LoginContainer() {
   return (
     <Flex h={"100vh"}>
       <Image src={"/login.jpg"} w={"60%"} h={"100%"} />
@@ -13,4 +14,4 @@ function LoginPageContainer() {
   );
 }
 
-export default LoginPageContainer;
+export default LoginContainer;

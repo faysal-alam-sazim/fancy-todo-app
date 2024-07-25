@@ -1,22 +1,18 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   Box,
   Button,
-  Container,
-  Flex,
-  Paper,
   PasswordInput,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 import classes from "./LoginForm.module.css";
-import { redirect } from "next/navigation";
+
 import { TLoginCredentials } from "@/shared/typedefs/types";
-import { register } from "module";
-import { useRouter } from "next/router";
 
 function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -52,7 +48,7 @@ function LoginForm() {
   return (
     <Box className={classes.center}>
       <Title ta={"center"} mb={30} c={"blue"}>
-        Pleases Login Here!
+        Please Login Here!
       </Title>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -65,12 +61,15 @@ function LoginForm() {
         <Controller
           name="email"
           control={control}
+          rules={{ required: "Email is required" }}
           render={({ field }) => (
             <TextInput
               {...field}
               placeholder="email"
               type="email"
               label="Email"
+              error={errors.email?.message}
+              withAsterisk
             />
           )}
         />
@@ -79,6 +78,7 @@ function LoginForm() {
           control={control}
           rules={{
             validate: validatePassword,
+            required: "Password is required",
           }}
           render={({ field }) => (
             <PasswordInput
@@ -86,6 +86,7 @@ function LoginForm() {
               placeholder="password"
               {...field}
               error={errors.password?.message}
+              withAsterisk
             />
           )}
         />
