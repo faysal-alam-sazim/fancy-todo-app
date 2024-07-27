@@ -41,13 +41,15 @@ function EditTask({
 
     console.log("Updated Task", updatedTask);
     updateTaskInLocalStorage(updatedTask);
-    setTasks(getSortedTasks());
+    setTasks && setTasks(getSortedTasks());
     setTaskToEdit(null);
 
-    const currState = getSortedTasks();
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...currState]]);
-    setCurrStateIndex(prevHistory.length);
+    if (history && currStateIndex && setHistory && setCurrStateIndex) {
+      const currState = getSortedTasks();
+      const prevHistory = history.slice(0, currStateIndex + 1);
+      setHistory([...prevHistory, [...currState]]);
+      setCurrStateIndex(prevHistory.length);
+    }
   };
 
   const validateDueDate = (value: Date | null) => {
