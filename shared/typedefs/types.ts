@@ -8,3 +8,8 @@ export type TTask = {
   priority: EPriority;
   status: ETaskStatus;
 };
+
+export type TLoginCredentials = {
+  email: string;
+  password: string;
+};
