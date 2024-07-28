@@ -1,28 +1,17 @@
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Button, Modal, Select, TextInput, Textarea } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import "@mantine/dates/styles.css";
 
-import {
-  getSortedTasks,
-  updateTaskInLocalStorage,
-} from "@/shared/utils/localStorage";
 import { TTask } from "@/shared/typedefs/types";
 import { EPriority } from "@/shared/typedefs/enums";
+import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import { TEditTaskProps } from "./EditTask.types";
 
-function EditTask({
-  opened,
-  close,
-  task,
-  setTasks,
-  setTaskToEdit,
-  setHistory,
-  history,
-  setCurrStateIndex,
-  currStateIndex,
-}: TEditTaskProps) {
+function EditTask({ opened, close, task, setTaskToEdit }: TEditTaskProps) {
+  const { updateTask } = useTasksContext();
+
   const {
     control,
     handleSubmit,
@@ -30,26 +19,8 @@ function EditTask({
   } = useForm<TTask>({ mode: "onBlur" });
 
   const onSubmit: SubmitHandler<TTask> = (data: TTask) => {
-    const updatedTask: TTask = {
-      id: task.id,
-      title: data.title,
-      description: data.description,
-      dueDate: data.dueDate,
-      priority: data.priority,
-      status: task.status,
-    };
-
-    console.log("Updated Task", updatedTask);
-    updateTaskInLocalStorage(updatedTask);
-    setTasks && setTasks(getSortedTasks());
     setTaskToEdit(null);
-
-    if (history && currStateIndex && setHistory && setCurrStateIndex) {
-      const currState = getSortedTasks();
-      const prevHistory = history.slice(0, currStateIndex + 1);
-      setHistory([...prevHistory, [...currState]]);
-      setCurrStateIndex(prevHistory.length);
-    }
+    updateTask(data, task.id.toString());
   };
 
   const validateDueDate = (value: Date | null) => {

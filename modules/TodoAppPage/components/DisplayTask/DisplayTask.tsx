@@ -1,31 +1,22 @@
 import { useState } from "react";
+import Link from "next/link";
 import { useDisclosure } from "@mantine/hooks";
-import { Flex, Card, Text, Group, Button, Badge } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
+import { Flex, Card, Text, Group, Button, Badge, Box } from "@mantine/core";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
-import {
-  deleteTaskFromLocalStorage,
-  getSortedTasks,
-  markTaskComplete,
-} from "@/shared/utils/localStorage";
+import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import { TTask } from "@/shared/typedefs/types";
 import { ETaskStatus } from "@/shared/typedefs/enums";
 import { getPriority, getPriorityColor } from "@/shared/utils/utility";
 
 import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
-import Link from "next/link";
 
-function DisplayTask({
-  tasks,
-  setTasks,
-  setHistory,
-  history,
-  setCurrStateIndex,
-  currStateIndex,
-}: TDisplayTaskProps) {
+function DisplayTask({ tasks }: TDisplayTaskProps) {
+  const { markTask, deleteTask } = useTasksContext();
+
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
 
@@ -35,14 +26,7 @@ function DisplayTask({
   };
 
   const handleMarkComplete = (task: TTask) => {
-    task.status = ETaskStatus.COMPLETED;
-    markTaskComplete(task);
-    setTasks(getSortedTasks());
-
-    const currState = getSortedTasks();
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...currState]]);
-    setCurrStateIndex(prevHistory.length);
+    markTask(task);
   };
 
   const handleDeleteTask = (task: TTask) => {
@@ -55,13 +39,7 @@ function DisplayTask({
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        const tasksAfterDelete = deleteTaskFromLocalStorage(task);
-        setTasks(tasksAfterDelete);
-
-        const currState = getSortedTasks();
-        const prevHistory = history.slice(0, currStateIndex + 1);
-        setHistory([...prevHistory, [...currState]]);
-        setCurrStateIndex(prevHistory.length);
+        deleteTask(task);
 
         Swal.fire({
           title: "Deleted!",
@@ -87,16 +65,21 @@ function DisplayTask({
             withBorder
           >
             <Group justify="space-between" mt="sm" mb="xs">
-              <Link href={`/task/${task.id}`}>
-                {" "}
-                <Text fw={500}>{task.title}</Text>
-              </Link>
-              <div
-                className="p-2 bg-red-600 text-white rounded-full cursor-pointer"
-                onClick={() => handleDeleteTask(task)}
+              <Link
+                href={`/task/${task.id}`}
+                style={{ textDecoration: "none" }}
               >
-                <IconTrash />
-              </div>
+                <Text fw={600} c={"black"}>
+                  {task.title}
+                </Text>
+              </Link>
+              <Button
+                leftSection={<IconTrash />}
+                onClick={() => handleDeleteTask(task)}
+                color={"red"}
+              >
+                Delete
+              </Button>
             </Group>
 
             <Text size="sm" c="dimmed" mb={4}>
@@ -117,12 +100,17 @@ function DisplayTask({
                   : "Not set"}
               </span>
             </Text>
-            <Flex justify={"space-between"} align={"center"}>
+            <Flex justify={"space-between"} align={"center"} mt={10}>
               {task.status === ETaskStatus.COMPLETED ? (
                 <Button disabled>Completed</Button>
               ) : (
                 <>
-                  <Button onClick={() => handleEditTask(task)}>Edit</Button>
+                  <Button
+                    leftSection={<IconEdit />}
+                    onClick={() => handleEditTask(task)}
+                  >
+                    Edit
+                  </Button>
                   <Button
                     color="green"
                     onClick={() => handleMarkComplete(task)}
@@ -140,12 +128,7 @@ function DisplayTask({
           opened={opened}
           close={close}
           task={taskToEdit}
-          setTasks={setTasks}
           setTaskToEdit={setTaskToEdit}
-          setHistory={setHistory}
-          history={history}
-          setCurrStateIndex={setCurrStateIndex}
-          currStateIndex={currStateIndex}
         />
       )}
     </Flex>
