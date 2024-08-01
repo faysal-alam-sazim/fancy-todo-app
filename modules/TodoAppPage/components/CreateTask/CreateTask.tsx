@@ -3,32 +3,22 @@ import { Button, Modal, Select, TextInput, Textarea } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
 
-import {
-  addTaskToLocalStorage,
-  getLastTaskId,
-  getSortedTasks,
-  saveLastTaskId,
-} from "@/shared/utils/localStorage";
+import { getLastTaskId } from "@/shared/utils/localStorage";
 import { TTask } from "@/shared/typedefs/types";
 import { EPriority, ETaskStatus } from "@/shared/typedefs/enums";
+import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import { TCreateTaskProps } from "./CreateTask.types";
 
-function CreateTask({
-  opened,
-  close,
-  setTasks,
-  setHistory,
-  history,
-  setCurrStateIndex,
-  currStateIndex,
-}: TCreateTaskProps) {
+function CreateTask({ opened, close }: TCreateTaskProps) {
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
     reset,
   } = useForm<TTask>({ mode: "onBlur" });
+
+  const { addTask } = useTasksContext();
 
   const onSubmit: SubmitHandler<TTask> = (data: TTask) => {
     const id = getLastTaskId() + 1;
@@ -40,16 +30,8 @@ function CreateTask({
       priority: data.priority,
       status: ETaskStatus.ACTIVE,
     };
-
-    addTaskToLocalStorage(task);
-    setTasks(getSortedTasks());
-    saveLastTaskId(id);
+    addTask(task);
     reset();
-
-    const currState = getSortedTasks();
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...currState]]);
-    setCurrStateIndex(prevHistory.length);
   };
 
   const validateDueDate = (value: Date | null) => {

@@ -1,26 +1,16 @@
 import { useState } from "react";
 import { Group, Text, Button, Box, Radio, Flex } from "@mantine/core";
-import { IconFilter } from "@tabler/icons-react";
+import { IconFilter, IconPlus } from "@tabler/icons-react";
 import { DatePickerInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
 
 import { EPriority, ETaskStatus } from "@/shared/typedefs/enums";
+import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import classes from "./MenuBar.module.css";
 import { TMenuBarProps } from "./MenuBar.types";
 
-function MenuBar({
-  open,
-  handlePriorityFilter,
-  handleStatusFilter,
-  handleDueDateFilter,
-  handleResetFilter,
-  clearCompletedTasks,
-  undoState,
-  redoState,
-  currStateIndex,
-  history,
-}: TMenuBarProps) {
+function MenuBar({ open }: TMenuBarProps) {
   const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
     null
   );
@@ -28,12 +18,24 @@ function MenuBar({
 
   const [filteringDate, setFilteringDate] = useState<Date | null>(null);
 
+  const {
+    filterByPriorty,
+    filterByStatus,
+    filterByDueDate,
+    resetFilter,
+    clearCompletedTasks,
+    undoState,
+    redoState,
+    currStateIndex,
+    history,
+  } = useTasksContext();
+
   const handlePriorityRadioButton = (value: string) => {
     setPriorityRadioValue(value);
     setStatusRadioValue(null);
     setFilteringDate(null);
 
-    handlePriorityFilter(value);
+    filterByPriorty(value);
   };
 
   const handleStatusRadioButton = (value: string) => {
@@ -41,7 +43,7 @@ function MenuBar({
     setPriorityRadioValue(null);
     setFilteringDate(null);
 
-    handleStatusFilter(value);
+    filterByStatus(value);
   };
 
   const handleDueDateInput = (value: Date | null) => {
@@ -50,7 +52,7 @@ function MenuBar({
     setFilteringDate(value);
 
     if (value) {
-      handleDueDateFilter(value);
+      filterByDueDate(value);
     }
   };
 
@@ -59,7 +61,7 @@ function MenuBar({
     setStatusRadioValue(null);
     setFilteringDate(null);
 
-    handleResetFilter();
+    resetFilter();
   };
 
   return (
@@ -67,7 +69,9 @@ function MenuBar({
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
           <Text>TO-DO App</Text>
-          <Button onClick={open}>Create Task</Button>
+          <Button onClick={open} rightSection={<IconPlus />}>
+            Create Task
+          </Button>
         </Group>
         <Text className={classes.link}>
           <IconFilter className={classes.linkIcon} stroke={1.5} />
@@ -108,6 +112,7 @@ function MenuBar({
           color="red"
           style={{ marginTop: 8 }}
           onClick={clearCompletedTasks}
+          w={"100%"}
         >
           Clear Completed Task
         </Button>

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
-import { Badge, Box, Button, Card, Flex, Group, Text } from "@mantine/core";
+import { Badge, Button, Card, Flex, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
-import { ETaskStatus } from "@/shared/typedefs/enums";
 import { TTask } from "@/shared/typedefs/types";
+import { ETaskStatus } from "@/shared/typedefs/enums";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import { getPriority, getPriorityColor } from "@/shared/utils/utility";
 import EditTask from "@/modules/TodoAppPage/components/EditTask/EditTask";
