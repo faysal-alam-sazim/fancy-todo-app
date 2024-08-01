@@ -89,6 +89,11 @@ function getSortedTasks() {
   return tasks;
 }
 
+function getTaskFromLocalStorage(taskId: string) {
+  const tasks = getTasksFromLocalStorage();
+  return tasks.find((task: TTask) => Number(task.id) === Number(taskId));
+}
+
 export {
   addTaskToLocalStorage,
   getTasksFromLocalStorage,
@@ -100,4 +105,5 @@ export {
   getSortedTasks,
   deleteCompletedTasksFromLocalStorage,
   setTasksAtLocalStorage,
+  getTaskFromLocalStorage,
 };

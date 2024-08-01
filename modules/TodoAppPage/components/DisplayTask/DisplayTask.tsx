@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { Flex, Card, Text, Group, Button } from "@mantine/core";
+import { Flex, Card, Text, Group, Button, Badge } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -11,10 +11,12 @@ import {
   markTaskComplete,
 } from "@/shared/utils/localStorage";
 import { TTask } from "@/shared/typedefs/types";
-import { EPriority, ETaskStatus } from "@/shared/typedefs/enums";
+import { ETaskStatus } from "@/shared/typedefs/enums";
+import { getPriority, getPriorityColor } from "@/shared/utils/utility";
 
 import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
+import Link from "next/link";
 
 function DisplayTask({
   tasks,
@@ -85,7 +87,10 @@ function DisplayTask({
             withBorder
           >
             <Group justify="space-between" mt="sm" mb="xs">
-              <Text fw={500}>{task.title}</Text>
+              <Link href={`/task/${task.id}`}>
+                {" "}
+                <Text fw={500}>{task.title}</Text>
+              </Link>
               <div
                 className="p-2 bg-red-600 text-white rounded-full cursor-pointer"
                 onClick={() => handleDeleteTask(task)}
@@ -98,13 +103,11 @@ function DisplayTask({
               {task.description}
             </Text>
 
-            <Text size="sm" c="dimmed" mb={4}>
+            <Text size="md" c="dimmed" mb={4}>
               Priority:{" "}
-              {task.priority === EPriority.LOW
-                ? "Low"
-                : task.priority === EPriority.MEDIUM
-                ? "Medium"
-                : "High"}
+              <Badge color={getPriorityColor(task.priority)}>
+                {getPriority(task.priority)}
+              </Badge>
             </Text>
             <Text size="sm" c="dimmed" mb={4}>
               Due Date:
