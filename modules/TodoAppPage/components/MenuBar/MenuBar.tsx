@@ -10,7 +10,7 @@ import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import classes from "./MenuBar.module.css";
 import { TMenuBarProps } from "./MenuBar.types";
 
-function MenuBar({ open }: TMenuBarProps) {
+const MenuBar = ({ open }: TMenuBarProps) => {
   const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
     null
   );
@@ -130,6 +130,6 @@ function MenuBar({ open }: TMenuBarProps) {
       </div>
     </nav>
   );
-}
+};
 
 export default MenuBar;

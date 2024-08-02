@@ -9,7 +9,7 @@ import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import { TEditTaskProps } from "./EditTask.types";
 
-function EditTask({ opened, close, task, setTaskToEdit }: TEditTaskProps) {
+const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
   const { updateTask } = useTasksContext();
 
   const {
@@ -107,6 +107,6 @@ function EditTask({ opened, close, task, setTaskToEdit }: TEditTaskProps) {
       </Modal>
     </>
   );
-}
+};
 
 export default EditTask;

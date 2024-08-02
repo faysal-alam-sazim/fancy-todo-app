@@ -13,7 +13,7 @@ import EditTask from "@/modules/TodoAppPage/components/EditTask/EditTask";
 
 import { IProps } from "./TaskDetails.types";
 
-function TaskDetails({ task }: IProps) {
+const TaskDetails = ({ task }: IProps) => {
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
   const { markTask, deleteTask } = useTasksContext();
@@ -111,6 +111,6 @@ function TaskDetails({ task }: IProps) {
       )}
     </Card>
   );
-}
+};
 
 export default TaskDetails;

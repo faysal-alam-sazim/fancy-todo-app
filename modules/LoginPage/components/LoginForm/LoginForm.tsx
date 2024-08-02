@@ -14,7 +14,7 @@ import classes from "./LoginForm.module.css";
 
 import { TLoginCredentials } from "@/shared/typedefs/types";
 
-function LoginForm() {
+const LoginForm = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const {
@@ -95,6 +95,6 @@ function LoginForm() {
       </form>
     </Box>
   );
-}
+};
 
 export default LoginForm;

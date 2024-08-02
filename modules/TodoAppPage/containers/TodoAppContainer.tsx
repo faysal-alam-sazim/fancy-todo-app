@@ -7,7 +7,7 @@ import CreateTask from "../components/CreateTask/CreateTask";
 import DisplayTask from "../components/DisplayTask/DisplayTask";
 import MenuBar from "../components/MenuBar/MenuBar";
 
-function TodoAppContainer() {
+const TodoAppContainer = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { tasks } = useTasksContext();
 
@@ -22,6 +22,6 @@ function TodoAppContainer() {
       </Flex>
     </div>
   );
-}
+};
 
 export default TodoAppContainer;

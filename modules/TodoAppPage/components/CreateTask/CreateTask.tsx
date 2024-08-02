@@ -10,7 +10,7 @@ import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import { TCreateTaskProps } from "./CreateTask.types";
 
-function CreateTask({ opened, close }: TCreateTaskProps) {
+const CreateTask = ({ opened, close }: TCreateTaskProps) => {
   const {
     control,
     handleSubmit,
@@ -115,6 +115,6 @@ function CreateTask({ opened, close }: TCreateTaskProps) {
       </Modal>
     </>
   );
-}
+};
 
 export default CreateTask;
