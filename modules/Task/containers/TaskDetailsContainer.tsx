@@ -33,7 +33,7 @@ const TaskDetailsContainer = () => {
       <Title>Task Details</Title>
 
       {task ? (
-        <TaskDetails task={task} />
+        <TaskDetails task={task} refetch={refetch} />
       ) : (
         <Text>Task is deleted. Please go back.</Text>
       )}
