@@ -9,23 +9,15 @@ import dayjs from "dayjs";
 
 import {
   useCreateTaskMutation,
+  useDeleteCompletedTaskMutation,
+  useDeleteTaskMutation,
   useGetAllTasksQuery,
   useUpdateTaskMutation,
 } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import { TCreateTaskDto, TTask, TUpdateTaskDto } from "../../typedefs/types";
-import {
-  deleteCompletedTasksFromLocalStorage,
-  deleteTaskFromLocalStorage,
-  getSortedTasks,
-  setTasksAtLocalStorage,
-} from "../localStorage";
+import { getSortedTasks, setTasksAtLocalStorage } from "../localStorage";
 import { ITasksContextType, TFilter } from "./TasksProvider.types";
-import {
-  useCreateTaskMutation,
-  useGetAllTasksQuery,
-  useUpdateTaskMutation,
-} from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TasksContext = createContext<ITasksContextType | undefined>(undefined);
 
@@ -40,6 +32,8 @@ function TasksProvider({ children }: IProps) {
   const { data: tasks, refetch } = useGetAllTasksQuery();
   const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+  const [deleteTask] = useDeleteTaskMutation();
+  const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
 
   useEffect(() => {
     tasks && setHistory([tasks]);
@@ -87,21 +81,29 @@ function TasksProvider({ children }: IProps) {
     setCurrStateIndex(prevHistory.length);
   };
 
-  const deleteTask = (task: TTask) => {
-    deleteTaskFromLocalStorage(task);
-    const updatedTasks = getUpdatedTasks();
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await deleteTask({ id: taskId }).unwrap();
+      refetch();
+    } catch (err) {
+      alert(err);
+    }
 
     const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...updatedTasks]]);
+    tasks && setHistory([...prevHistory, [...tasks]]);
     setCurrStateIndex(prevHistory.length);
   };
 
-  const clearCompletedTasks = () => {
-    deleteCompletedTasksFromLocalStorage();
-    const updatedTasks = getUpdatedTasks();
+  const clearCompletedTasks = async () => {
+    try {
+      await deleteCompletedTask().unwrap();
+      refetch();
+    } catch (err) {
+      console.error("Failed to delete completed tasks: ", err);
+    }
 
     const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...updatedTasks]]);
+    tasks && setHistory([...prevHistory, [...tasks]]);
     setCurrStateIndex(prevHistory.length);
   };
 
@@ -160,7 +162,7 @@ function TasksProvider({ children }: IProps) {
         currStateIndex,
         handleAddTask,
         handleUpdateTask,
-        deleteTask,
+        handleDeleteTask,
         clearCompletedTasks,
         filterByPriorty,
         filterByStatus,

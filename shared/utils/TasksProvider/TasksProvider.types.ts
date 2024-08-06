@@ -6,7 +6,7 @@ export interface ITasksContextType {
   currStateIndex: number;
   handleAddTask: (task: TCreateTaskDto) => void;
   handleUpdateTask: (data: TUpdateTaskDto, taskId: string) => void;
-  deleteTask: (task: TTask) => void;
+  handleDeleteTask: (taskId: string) => void;
   clearCompletedTasks: () => void;
   filterByPriorty: (priority: string) => TTask[];
   filterByStatus: (status: string) => TTask[];
