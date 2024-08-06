@@ -10,22 +10,29 @@ import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import { TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
 import { ETaskStatus } from "@/shared/typedefs/enums";
 import { getPriority, getPriorityColor } from "@/shared/utils/utility";
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "@/shared/redux/rtk-apis/tasksAPI";
 
 import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
 
 const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
-  const { handleUpdateTask, handleDeleteTask } = useTasksContext();
+  const { handleUndoStackAfterUpdate, handleUndoStackAfterDelete } =
+    useTasksContext();
+  const [deleteTask] = useDeleteTaskMutation();
 
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
+  const [updateTask] = useUpdateTaskMutation();
 
   const handleEditTask = (task: TTask) => {
     setTaskToEdit(task);
     open();
   };
 
-  const handleMarkComplete = (task: TTask) => {
+  const handleMarkComplete = async (task: TTask) => {
     const markedTask: TUpdateTaskDto = {
       title: task.title,
       description: task.description,
@@ -33,7 +40,15 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
       priority: task.priority,
       status: ETaskStatus.COMPLETED,
     };
-    handleUpdateTask(markedTask, task.id.toString());
+    try {
+      await updateTask({
+        id: task.id.toString(),
+        updatedTask: markedTask,
+      }).unwrap();
+      handleUndoStackAfterUpdate();
+    } catch (err) {
+      alert(err);
+    }
   };
 
   const handleDeleteTaskButton = (taskId: number) => {
@@ -44,9 +59,14 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        handleDeleteTask(taskId.toString());
+        try {
+          await deleteTask({ id: taskId.toString() }).unwrap();
+          handleUndoStackAfterDelete();
+        } catch (err) {
+          alert(err);
+        }
 
         Swal.fire({
           title: "Deleted!",

@@ -6,18 +6,18 @@ import "@mantine/dates/styles.css";
 
 import { EPriority, ETaskStatus } from "@/shared/typedefs/enums";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
+import { useDeleteCompletedTaskMutation } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import classes from "./MenuBar.module.css";
 import { TMenuBarProps } from "./MenuBar.types";
 
 const MenuBar = ({ open }: TMenuBarProps) => {
+  const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
   const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
     null
   );
   const [statusRadioValue, setStatusRadioValue] = useState<string | null>(null);
-
   const [filteringDate, setFilteringDate] = useState<Date | null>(null);
-
   const {
     undoStack,
     redoStack,
@@ -25,7 +25,7 @@ const MenuBar = ({ open }: TMenuBarProps) => {
     filterByStatus,
     filterByDueDate,
     resetFilter,
-    clearCompletedTasks,
+    handleUndoStackAfterClearCompleted,
     undoState,
     redoState,
   } = useTasksContext();
@@ -62,6 +62,15 @@ const MenuBar = ({ open }: TMenuBarProps) => {
     setFilteringDate(null);
 
     resetFilter();
+  };
+
+  const handleClearTaskButton = async () => {
+    try {
+      await deleteCompletedTask().unwrap();
+      handleUndoStackAfterClearCompleted();
+    } catch (err) {
+      alert(err);
+    }
   };
 
   return (
@@ -111,7 +120,7 @@ const MenuBar = ({ open }: TMenuBarProps) => {
         <Button
           color="red"
           style={{ marginTop: 8 }}
-          onClick={clearCompletedTasks}
+          onClick={handleClearTaskButton}
           w={"100%"}
         >
           Clear Completed Task

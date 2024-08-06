@@ -8,12 +8,8 @@ import React, {
 import dayjs from "dayjs";
 
 import {
-  useCreateTaskMutation,
-  useDeleteCompletedTaskMutation,
-  useDeleteTaskMutation,
   useGetAllTasksQuery,
   useSyncTasksMutation,
-  useUpdateTaskMutation,
 } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import { TCreateTaskDto, TTask, TUpdateTaskDto } from "../../typedefs/types";
@@ -30,10 +26,6 @@ function TasksProvider({ children }: IProps) {
   const [filter, setFilter] = useState<TFilter | null>(null);
   const { data, isSuccess } = useGetAllTasksQuery();
   const [tasks, setTasks] = useState<TTask[]>();
-  const [createTask] = useCreateTaskMutation();
-  const [updateTask] = useUpdateTaskMutation();
-  const [deleteTask] = useDeleteTaskMutation();
-  const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
   const [syncTasks] = useSyncTasksMutation();
 
   const [undoStack, setUndoStack] = useState<TTask[][]>([[]]);
@@ -58,62 +50,35 @@ function TasksProvider({ children }: IProps) {
     return filterByDueDate(new Date(filter.value));
   };
 
-  const handleAddTask = async (task: TCreateTaskDto) => {
-    try {
-      await createTask(task).unwrap();
-
-      const updatedTasks = getUpdatedTasks();
-      if (updatedTasks) {
-        setTasks(updatedTasks);
-        setUndoStack([...undoStack, updatedTasks]);
-      }
-    } catch (err) {
-      alert(err);
+  const handleUndoStackAfterCreate = () => {
+    const updatedTasks = getUpdatedTasks();
+    if (updatedTasks) {
+      setTasks(updatedTasks);
+      setUndoStack([...undoStack, updatedTasks]);
     }
   };
 
-  const handleUpdateTask = async (data: TUpdateTaskDto, taskId: string) => {
-    try {
-      await updateTask({
-        id: taskId,
-        updatedTask: data,
-      }).unwrap();
-
-      const updatedTasks = getUpdatedTasks();
-      if (updatedTasks) {
-        setTasks(updatedTasks);
-        setUndoStack([...undoStack, updatedTasks]);
-      }
-    } catch (err) {
-      alert(err);
+  const handleUndoStackAfterUpdate = () => {
+    const updatedTasks = getUpdatedTasks();
+    if (updatedTasks) {
+      setTasks(updatedTasks);
+      setUndoStack([...undoStack, updatedTasks]);
     }
   };
 
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      await deleteTask({ id: taskId }).unwrap();
-
-      const updatedTasks = getUpdatedTasks();
-      if (updatedTasks) {
-        setTasks(updatedTasks);
-        setUndoStack([...undoStack, updatedTasks]);
-      }
-    } catch (err) {
-      alert(err);
+  const handleUndoStackAfterDelete = () => {
+    const updatedTasks = getUpdatedTasks();
+    if (updatedTasks) {
+      setTasks(updatedTasks);
+      setUndoStack([...undoStack, updatedTasks]);
     }
   };
 
-  const clearCompletedTasks = async () => {
-    try {
-      await deleteCompletedTask().unwrap();
-
-      const updatedTasks = getUpdatedTasks();
-      if (updatedTasks) {
-        setTasks(updatedTasks);
-        setUndoStack([...undoStack, updatedTasks]);
-      }
-    } catch (err) {
-      alert(err);
+  const handleUndoStackAfterClearCompleted = () => {
+    const updatedTasks = getUpdatedTasks();
+    if (updatedTasks) {
+      setTasks(updatedTasks);
+      setUndoStack([...undoStack, updatedTasks]);
     }
   };
 
@@ -174,8 +139,6 @@ function TasksProvider({ children }: IProps) {
 
   const saveChanges = async (tasksToSave: TTask[]) => {
     try {
-      setUndoStack([[]]);
-      setRedoStack([[]]);
       await syncTasks(tasksToSave).unwrap();
     } catch (error) {
       console.error("Failed to sync tasks:", error);
@@ -188,10 +151,10 @@ function TasksProvider({ children }: IProps) {
         tasks,
         undoStack,
         redoStack,
-        handleAddTask,
-        handleUpdateTask,
-        handleDeleteTask,
-        clearCompletedTasks,
+        handleUndoStackAfterCreate,
+        handleUndoStackAfterUpdate,
+        handleUndoStackAfterDelete,
+        handleUndoStackAfterClearCompleted,
         filterByPriorty,
         filterByStatus,
         filterByDueDate,

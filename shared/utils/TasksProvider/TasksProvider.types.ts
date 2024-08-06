@@ -4,10 +4,10 @@ export interface ITasksContextType {
   tasks: TTask[] | undefined;
   undoStack: TTask[][];
   redoStack: TTask[][];
-  handleAddTask: (task: TCreateTaskDto) => void;
-  handleUpdateTask: (data: TUpdateTaskDto, taskId: string) => void;
-  handleDeleteTask: (taskId: string) => void;
-  clearCompletedTasks: () => void;
+  handleUndoStackAfterCreate: () => void;
+  handleUndoStackAfterUpdate: () => void;
+  handleUndoStackAfterDelete: () => void;
+  handleUndoStackAfterClearCompleted: () => void;
   filterByPriorty: (priority: string) => TTask[] | undefined;
   filterByStatus: (status: string) => TTask[] | undefined;
   filterByDueDate: (date: Date) => TTask[] | undefined;

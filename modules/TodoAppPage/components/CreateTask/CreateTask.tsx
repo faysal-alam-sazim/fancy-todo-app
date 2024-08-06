@@ -4,11 +4,13 @@ import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import TaskModal from "@/shared/components/TaskModal/TaskModal";
 
 import { TCreateTaskProps } from "./CreateTask.types";
+import { useCreateTaskMutation } from "@/shared/redux/rtk-apis/tasksAPI";
 
 const CreateTask = ({ opened, close }: TCreateTaskProps) => {
-  const { handleAddTask } = useTasksContext();
+  const { handleUndoStackAfterCreate } = useTasksContext();
+  const [createTask] = useCreateTaskMutation();
 
-  const createTask = (data: TTask) => {
+  const handleCreateTask = async (data: TTask) => {
     const task: TCreateTaskDto = {
       title: data.title,
       description: data.description,
@@ -16,7 +18,12 @@ const CreateTask = ({ opened, close }: TCreateTaskProps) => {
       priority: data.priority,
       status: ETaskStatus.ACTIVE,
     };
-    handleAddTask(task);
+    try {
+      await createTask(task).unwrap();
+      handleUndoStackAfterCreate();
+    } catch (err) {
+      alert(err);
+    }
   };
 
   return (
@@ -26,7 +33,7 @@ const CreateTask = ({ opened, close }: TCreateTaskProps) => {
         close={close}
         title="Create Task"
         buttonTitle="Create"
-        onSubmitAction={createTask}
+        onSubmitAction={handleCreateTask}
         resetAfterSubmit={true}
       />
     </>
