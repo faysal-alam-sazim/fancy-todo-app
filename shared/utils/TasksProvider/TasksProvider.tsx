@@ -21,7 +21,6 @@ import {
   setTasksAtLocalStorage,
 } from "../localStorage";
 import { ITasksContextType, TFilter } from "./TasksProvider.types";
-import { useGetAllTasksQuery } from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TasksContext = createContext<ITasksContextType | undefined>(undefined);
 
