@@ -9,7 +9,6 @@ export type TCreateTaskPayload = {
 };
 
 export type TUpdateTaskPayload = {
-  id: string;
   title?: string;
   description?: string;
   dueDate?: Date | null;
