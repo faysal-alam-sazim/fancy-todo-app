@@ -52,10 +52,10 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
 
   return (
     <Flex gap={4} direction={"column"} wrap={"wrap"}>
-      {tasks.length === 0 ? (
+      {tasks?.length === 0 ? (
         <Text>No tasks to show. Please create one.</Text>
       ) : (
-        tasks.map((task) => (
+        tasks?.map((task) => (
           <Card
             key={task.id}
             shadow="sm"
