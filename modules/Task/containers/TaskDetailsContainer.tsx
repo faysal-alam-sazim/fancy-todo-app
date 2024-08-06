@@ -7,6 +7,7 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import { useGetTaskQuery } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import TaskDetails from "../components/TaskDetails/TaskDetails";
+import { useGetSingleTaskQuery } from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TaskDetailsContainer = () => {
   const router = useRouter();
@@ -24,7 +25,7 @@ const TaskDetailsContainer = () => {
       <Title>Task Details</Title>
 
       {task ? (
-        <TaskDetails task={task} />
+        <TaskDetails task={task} refetch={refetch} />
       ) : (
         <Text>Task is deleted. Please go back.</Text>
       )}
