@@ -18,7 +18,10 @@ import {
 import { TCreateTaskDto, TTask, TUpdateTaskDto } from "../../typedefs/types";
 import { getSortedTasks, setTasksAtLocalStorage } from "../localStorage";
 import { ITasksContextType, TFilter } from "./TasksProvider.types";
-import { useGetAllTasksQuery } from "@/shared/redux/rtk-apis/tasksAPI";
+import {
+  useCreateTaskMutation,
+  useGetAllTasksQuery,
+} from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TasksContext = createContext<ITasksContextType | undefined>(undefined);
 
