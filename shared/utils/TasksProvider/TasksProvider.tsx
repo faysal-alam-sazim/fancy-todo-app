@@ -10,24 +10,17 @@ import dayjs from "dayjs";
 import {
   useCreateTaskMutation,
   useGetAllTasksQuery,
+  useUpdateTaskMutation,
 } from "@/shared/redux/rtk-apis/tasksAPI";
 
-import { TCreateTaskDto, TTask } from "../../typedefs/types";
-import { ETaskStatus } from "../../typedefs/enums";
+import { TCreateTaskDto, TTask, TUpdateTaskDto } from "../../typedefs/types";
 import {
   deleteCompletedTasksFromLocalStorage,
   deleteTaskFromLocalStorage,
   getSortedTasks,
-  getTaskFromLocalStorage,
-  markTaskComplete,
   setTasksAtLocalStorage,
-  updateTaskInLocalStorage,
 } from "../localStorage";
 import { ITasksContextType, TFilter } from "./TasksProvider.types";
-import {
-  useCreateTaskMutation,
-  useGetAllTasksQuery,
-} from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TasksContext = createContext<ITasksContextType | undefined>(undefined);
 
@@ -41,6 +34,7 @@ function TasksProvider({ children }: IProps) {
   const [filter, setFilter] = useState<TFilter | null>(null);
   const { data: tasks, refetch } = useGetAllTasksQuery();
   const [createTask] = useCreateTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
 
   useEffect(() => {
     tasks && setHistory([tasks]);
@@ -72,31 +66,19 @@ function TasksProvider({ children }: IProps) {
     setCurrStateIndex(prevHistory.length);
   };
 
-  const updateTask = (data: TTask, taskId: string) => {
-    const prevTask = getTaskFromLocalStorage(taskId);
-    const updatedTask = {
-      id: prevTask.id,
-      title: data.title,
-      description: data.description,
-      dueDate: data.dueDate,
-      priority: data.priority,
-      status: prevTask.status,
-    };
-    updateTaskInLocalStorage(updatedTask);
-    const updatedTasks = getUpdatedTasks();
+  const handleUpdateTask = async (data: TUpdateTaskDto, taskId: string) => {
+    try {
+      await updateTask({
+        id: taskId,
+        updatedTask: data,
+      }).unwrap();
+      refetch();
+    } catch (err) {
+      alert(err);
+    }
 
     const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...updatedTasks]]);
-    setCurrStateIndex(prevHistory.length);
-  };
-
-  const markTask = (task: TTask) => {
-    task.status = ETaskStatus.COMPLETED;
-    markTaskComplete(task);
-    const updatedTasks = getUpdatedTasks();
-
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...updatedTasks]]);
+    tasks && setHistory([...prevHistory, [...tasks]]);
     setCurrStateIndex(prevHistory.length);
   };
 
@@ -172,8 +154,7 @@ function TasksProvider({ children }: IProps) {
         history,
         currStateIndex,
         handleAddTask,
-        updateTask,
-        markTask,
+        handleUpdateTask,
         deleteTask,
         clearCompletedTasks,
         filterByPriorty,

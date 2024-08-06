@@ -1,15 +1,22 @@
-import { TTask } from "@/shared/typedefs/types";
+import { TTask, TUpdateTaskPayload } from "@/shared/typedefs/types";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import TaskModal from "@/shared/components/TaskModal/TaskModal";
 
 import { TEditTaskProps } from "./EditTask.types";
 
 const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
-  const { updateTask } = useTasksContext();
+  const { handleUpdateTask } = useTasksContext();
 
   const editTask = (data: TTask) => {
     setTaskToEdit(null);
-    updateTask(data, task.id.toString());
+    const updatedTask: TUpdateTaskPayload = {
+      title: data.title,
+      description: data.description,
+      dueDate: data.dueDate,
+      priority: data.priority,
+      status: data.status,
+    };
+    handleUpdateTask(updatedTask, task.id.toString());
   };
 
   return (

@@ -1,12 +1,11 @@
-import { TCreateTaskDto, TTask } from "@/shared/typedefs/types";
+import { TCreateTaskDto, TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
 
 export interface ITasksContextType {
   tasks: TTask[] | undefined;
   history: TTask[][];
   currStateIndex: number;
   handleAddTask: (task: TCreateTaskDto) => void;
-  updateTask: (data: TTask, taskId: string) => void;
-  markTask: (task: TTask) => void;
+  handleUpdateTask: (data: TUpdateTaskDto, taskId: string) => void;
   deleteTask: (task: TTask) => void;
   clearCompletedTasks: () => void;
   filterByPriorty: (priority: string) => TTask[];

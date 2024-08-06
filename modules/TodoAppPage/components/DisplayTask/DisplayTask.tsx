@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
-import { TTask } from "@/shared/typedefs/types";
+import { TTask, TUpdateTaskPayload } from "@/shared/typedefs/types";
 import { ETaskStatus } from "@/shared/typedefs/enums";
 import { getPriority, getPriorityColor } from "@/shared/utils/utility";
 
@@ -15,7 +15,7 @@ import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
 
 const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
-  const { markTask, deleteTask } = useTasksContext();
+  const { handleUpdateTask, deleteTask } = useTasksContext();
 
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
@@ -26,7 +26,14 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
   };
 
   const handleMarkComplete = (task: TTask) => {
-    markTask(task);
+    const markedTask: TUpdateTaskPayload = {
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      priority: task.priority,
+      status: ETaskStatus.COMPLETED,
+    };
+    handleUpdateTask(markedTask, task.id.toString());
   };
 
   const handleDeleteTask = (task: TTask) => {
