@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import { api } from "./rtk-apis/tasksAPI";
 
 export const store = configureStore({
