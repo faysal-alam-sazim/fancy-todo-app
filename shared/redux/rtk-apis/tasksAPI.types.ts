@@ -7,3 +7,11 @@ export type TCreateTaskDto = {
   priority: EPriority;
   status: ETaskStatus;
 };
+
+export type TUpdateTaskDto = {
+  title?: string;
+  description?: string;
+  dueDate?: Date | null;
+  priority?: EPriority;
+  status?: ETaskStatus;
+};
