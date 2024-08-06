@@ -11,7 +11,7 @@ import TaskDetails from "../components/TaskDetails/TaskDetails";
 const TaskDetailsContainer = () => {
   const router = useRouter();
   const taskId = router.query.taskId?.toString();
-  const { data: task, refetch } = useGetTaskQuery(taskId as string);
+  const { data: task } = useGetTaskQuery(taskId as string);
 
   return (
     <Flex
