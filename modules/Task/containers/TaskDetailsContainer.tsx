@@ -8,21 +8,12 @@ import { TTask } from "@/shared/typedefs/types";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import TaskDetails from "../components/TaskDetails/TaskDetails";
+import { useGetTaskQuery } from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TaskDetailsContainer = () => {
   const router = useRouter();
   const taskId = router.query.taskId?.toString();
-  const { tasks } = useTasksContext();
-  const [task, setTask] = useState<TTask>();
-
-  useEffect(() => {
-    if (taskId) {
-      const task = tasks.find(
-        (item: TTask) => Number(item.id) === Number(taskId)
-      );
-      setTask(task);
-    }
-  }, [taskId, tasks]);
+  const { data: task, refetch } = useGetTaskQuery(taskId as string);
 
   return (
     <Flex
@@ -35,7 +26,7 @@ const TaskDetailsContainer = () => {
       <Title>Task Details</Title>
 
       {task ? (
-        <TaskDetails task={task} />
+        <TaskDetails task={task} refetch={refetch} />
       ) : (
         <Text>Task is deleted. Please go back.</Text>
       )}
