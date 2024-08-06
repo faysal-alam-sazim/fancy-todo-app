@@ -9,7 +9,7 @@ import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 
 import TaskDetails from "../components/TaskDetails/TaskDetails";
 
-function TaskDetailsContainer() {
+const TaskDetailsContainer = () => {
   const router = useRouter();
   const taskId = router.query.taskId?.toString();
   const { tasks } = useTasksContext();
@@ -44,6 +44,6 @@ function TaskDetailsContainer() {
       </Link>
     </Flex>
   );
-}
+};
 
 export default TaskDetailsContainer;

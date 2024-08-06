@@ -3,7 +3,7 @@ import { Overlay, Container, Title, Button, Text } from "@mantine/core";
 
 import classes from "./HeroBanner.module.css";
 
-export function HeroBanner() {
+const HeroBanner = () => {
   return (
     <div className={classes.hero}>
       <Overlay
@@ -40,4 +40,6 @@ export function HeroBanner() {
       </Container>
     </div>
   );
-}
+};
+
+export default HeroBanner;

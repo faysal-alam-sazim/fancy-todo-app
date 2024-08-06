@@ -14,7 +14,7 @@ import { getPriority, getPriorityColor } from "@/shared/utils/utility";
 import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
 
-function DisplayTask({ tasks }: TDisplayTaskProps) {
+const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
   const { markTask, deleteTask } = useTasksContext();
 
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
@@ -133,6 +133,6 @@ function DisplayTask({ tasks }: TDisplayTaskProps) {
       )}
     </Flex>
   );
-}
+};
 
 export default DisplayTask;

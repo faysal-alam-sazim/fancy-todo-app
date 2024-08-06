@@ -1,20 +1,7 @@
-import React from "react";
-import {
-  Overlay,
-  Container,
-  Title,
-  Button,
-  Text,
-  Box,
-  BackgroundImage,
-  Flex,
-} from "@mantine/core";
+import HeroBanner from "../components/HeroBanner/HeroBanner";
 
-import classes from "./HomePageContainer.module.css";
-import { HeroBanner } from "../components/HeroBanner/HeroBanner";
-
-function HomeContainer() {
+const HomeContainer = () => {
   return <HeroBanner />;
-}
+};
 
 export default HomeContainer;

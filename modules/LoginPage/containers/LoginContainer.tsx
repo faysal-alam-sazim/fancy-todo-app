@@ -3,7 +3,7 @@ import { Box, Flex, Image } from "@mantine/core";
 
 import LoginForm from "../components/LoginForm/LoginForm";
 
-function LoginContainer() {
+const LoginContainer = () => {
   return (
     <Flex h={"100vh"}>
       <Image src={"/login.jpg"} w={"60%"} h={"100%"} />
@@ -12,6 +12,6 @@ function LoginContainer() {
       </Box>
     </Flex>
   );
-}
+};
 
 export default LoginContainer;
