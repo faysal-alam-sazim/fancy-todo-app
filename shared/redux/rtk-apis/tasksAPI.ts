@@ -44,6 +44,10 @@ export const api = createApi({
         method: "DELETE",
       }),
     }),
+
+    getTask: builder.query<TTask, string>({
+      query: (id) => `todos/:${id}`,
+    }),
   }),
 });
 
@@ -53,4 +57,5 @@ export const {
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   useDeleteCompletedTaskMutation,
+  useGetTaskQuery,
 } = api;
