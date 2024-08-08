@@ -38,7 +38,7 @@ export const api = createApi({
 
     deleteCompletedTask: builder.mutation<{ success: boolean }, void>({
       query: () => ({
-        url: "todos",
+        url: "todos/completed",
         method: "DELETE",
       }),
     }),
