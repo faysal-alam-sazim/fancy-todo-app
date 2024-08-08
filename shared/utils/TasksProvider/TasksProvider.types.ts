@@ -14,6 +14,7 @@ export interface ITasksContextType {
   resetFilter: () => void;
   undoState: () => void;
   redoState: () => void;
+  saveChanges: () => void;
 }
 
 export type TFilter = {
