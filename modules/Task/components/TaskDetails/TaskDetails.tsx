@@ -13,7 +13,7 @@ import EditTask from "@/modules/TodoAppPage/components/EditTask/EditTask";
 
 import { IProps } from "./TaskDetails.types";
 
-const TaskDetails = ({ task, refetch }: IProps) => {
+const TaskDetails = ({ task }: IProps) => {
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
   const { handleUpdateTask, handleDeleteTask } = useTasksContext();
