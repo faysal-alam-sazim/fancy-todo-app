@@ -43,14 +43,24 @@ function TasksProvider({ children }: IProps) {
 
   const getUpdatedTasks = () => {
     if (!filter) {
+      console.log("Updated Tasks", tasks);
       return tasks;
     }
     if (filter.by === "priority") {
+      console.log(
+        "Updated Tasks: priority filter",
+        filterByPriorty(filter.value)
+      );
       return filterByPriorty(filter.value);
     }
     if (filter.by === "status") {
+      console.log("Updated Tasks: status filter", filterByStatus(filter.value));
       return filterByStatus(filter.value);
     }
+    console.log(
+      "Updated Tasks: due date filter",
+      filterByDueDate(new Date(filter.value))
+    );
     return filterByDueDate(new Date(filter.value));
   };
 
