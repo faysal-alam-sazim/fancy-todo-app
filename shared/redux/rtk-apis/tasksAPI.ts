@@ -30,6 +30,20 @@ export const api = createApi({
         body: updatedTask,
       }),
     }),
+
+    deleteTask: builder.mutation<{ success: boolean }, { id: string }>({
+      query: ({ id }) => ({
+        url: `todos/${id}`,
+        method: "DELETE",
+      }),
+    }),
+
+    deleteCompletedTask: builder.mutation<{ success: boolean }, void>({
+      query: () => ({
+        url: "todos/completed",
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -37,4 +51,6 @@ export const {
   useGetAllTasksQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
+  useDeleteTaskMutation,
+  useDeleteCompletedTaskMutation,
 } = api;
