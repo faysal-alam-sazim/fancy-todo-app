@@ -28,6 +28,7 @@ const MenuBar = ({ open }: TMenuBarProps) => {
     clearCompletedTasks,
     undoState,
     redoState,
+    saveChanges,
   } = useTasksContext();
 
   const handlePriorityRadioButton = (value: string) => {
@@ -124,6 +125,15 @@ const MenuBar = ({ open }: TMenuBarProps) => {
             Redo
           </Button>
         </Flex>
+        <Button
+          color="green"
+          style={{ marginTop: 8 }}
+          w={"100%"}
+          disabled={undoStack.length === redoStack.length}
+          onClick={saveChanges}
+        >
+          Save Changes
+        </Button>
       </div>
     </nav>
   );
