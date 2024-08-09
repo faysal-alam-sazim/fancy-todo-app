@@ -4,14 +4,23 @@ import { useRouter } from "next/router";
 import { Button, Flex, Text, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 
+import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import { useGetTaskQuery } from "@/shared/redux/rtk-apis/tasksAPI";
+import { TTask } from "@/shared/typedefs/types";
 
 import TaskDetails from "../components/TaskDetails/TaskDetails";
 
 const TaskDetailsContainer = () => {
   const router = useRouter();
   const taskId = router.query.taskId?.toString();
-  const { data: task, refetch } = useGetTaskQuery(taskId as string);
+  const { data, refetch } = useGetTaskQuery(taskId as string);
+  const { tasks } = useTasksContext();
+  const [task, setTask] = useState<TTask>();
+
+  useEffect(() => {
+    refetch();
+    data && setTask(data);
+  }, [tasks, data]);
 
   return (
     <Flex
