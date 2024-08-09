@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { TTask } from "@/shared/typedefs/types";
 
-import { TCreateTaskDto } from "./tasksAPI.types";
+import { TCreateTaskDto, TUpdateTaskDto } from "./tasksAPI.types";
 
 export const api = createApi({
   reducerPath: "api",
@@ -19,7 +19,22 @@ export const api = createApi({
         body: newTask,
       }),
     }),
+
+    updateTask: builder.mutation<
+      TTask,
+      { id: string; updatedTask: TUpdateTaskDto }
+    >({
+      query: ({ id, updatedTask }) => ({
+        url: `todos/${id}`,
+        method: "PUT",
+        body: updatedTask,
+      }),
+    }),
   }),
 });
 
-export const { useGetAllTasksQuery, useCreateTaskMutation } = api;
+export const {
+  useGetAllTasksQuery,
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
+} = api;
