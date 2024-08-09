@@ -8,9 +8,9 @@ export interface ITasksContextType {
   handleUpdateTask: (data: TUpdateTaskDto, taskId: string) => void;
   handleDeleteTask: (taskId: string) => void;
   clearCompletedTasks: () => void;
-  filterByPriorty: (priority: string) => TTask[];
-  filterByStatus: (status: string) => TTask[];
-  filterByDueDate: (date: Date) => TTask[];
+  filterByPriorty: (priority: string) => TTask[] | undefined;
+  filterByStatus: (status: string) => TTask[] | undefined;
+  filterByDueDate: (date: Date) => TTask[] | undefined;
   resetFilter: () => void;
   undoState: () => void;
   redoState: () => void;

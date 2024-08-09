@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { Badge, Button, Card, Flex, Group, Text } from "@mantine/core";
@@ -13,7 +13,7 @@ import EditTask from "@/modules/TodoAppPage/components/EditTask/EditTask";
 
 import { IProps } from "./TaskDetails.types";
 
-const TaskDetails = ({ task, refetch }: IProps) => {
+const TaskDetails = ({ task }: IProps) => {
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
   const { handleUpdateTask, handleDeleteTask } = useTasksContext();
@@ -34,7 +34,6 @@ const TaskDetails = ({ task, refetch }: IProps) => {
     }).then((result) => {
       if (result.isConfirmed) {
         handleDeleteTask(taskId.toString());
-        refetch();
         Swal.fire({
           title: "Deleted!",
           text: "Your task has been deleted.",
@@ -53,12 +52,11 @@ const TaskDetails = ({ task, refetch }: IProps) => {
       status: ETaskStatus.COMPLETED,
     };
     handleUpdateTask(markedTask, task.id.toString());
-    refetch();
   };
 
   return (
     <Card
-      key={task.id}
+      key={task?.id}
       shadow="sm"
       padding="lg"
       radius="md"
@@ -68,8 +66,8 @@ const TaskDetails = ({ task, refetch }: IProps) => {
       withBorder
     >
       <Group justify="space-between" mt="sm" mb="xs">
-        <Text fw={500}>{task.title}</Text>
-        {task.status === ETaskStatus.ACTIVE && (
+        <Text fw={500}>{task?.title}</Text>
+        {task?.status === ETaskStatus.ACTIVE && (
           <Button
             leftSection={<IconEdit />}
             onClick={() => handleEditTask(task)}
@@ -80,7 +78,7 @@ const TaskDetails = ({ task, refetch }: IProps) => {
       </Group>
 
       <Text size="md" c="dimmed" mb={4}>
-        {task.description}
+        {task?.description}
       </Text>
 
       <Text size="md" c="dimmed" mb={4}>
@@ -92,7 +90,7 @@ const TaskDetails = ({ task, refetch }: IProps) => {
       <Text size="md" c="dimmed" mb={4}>
         Due Date:{" "}
         <span className="ml-2">
-          {task.dueDate
+          {task?.dueDate
             ? dayjs(task.dueDate).format("DD MMMM YYYY")
             : "Not set"}
         </span>
@@ -101,14 +99,17 @@ const TaskDetails = ({ task, refetch }: IProps) => {
         <Button
           leftSection={<IconTrash />}
           color={"red"}
-          onClick={() => handleDeleteTaskButton(task.id)}
+          onClick={() => task && handleDeleteTaskButton(task.id)}
         >
           Delete
         </Button>
         {task?.status === ETaskStatus.COMPLETED ? (
           <Button disabled>Completed</Button>
         ) : (
-          <Button color="green" onClick={() => handleMarkComplete(task)}>
+          <Button
+            color="green"
+            onClick={() => task && handleMarkComplete(task)}
+          >
             Mark as complete
           </Button>
         )}
