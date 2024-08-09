@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
-import { TTask, TUpdateTaskPayload } from "@/shared/typedefs/types";
+import { TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
 import { ETaskStatus } from "@/shared/typedefs/enums";
 import { getPriority, getPriorityColor } from "@/shared/utils/utility";
 
@@ -26,7 +26,7 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
   };
 
   const handleMarkComplete = (task: TTask) => {
-    const markedTask: TUpdateTaskPayload = {
+    const markedTask: TUpdateTaskDto = {
       title: task.title,
       description: task.description,
       dueDate: task.dueDate,

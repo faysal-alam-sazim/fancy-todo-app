@@ -5,7 +5,7 @@ import { Badge, Button, Card, Flex, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
-import { TTask } from "@/shared/typedefs/types";
+import { TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
 import { ETaskStatus } from "@/shared/typedefs/enums";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import { getPriority, getPriorityColor } from "@/shared/utils/utility";
@@ -13,17 +13,17 @@ import EditTask from "@/modules/TodoAppPage/components/EditTask/EditTask";
 
 import { IProps } from "./TaskDetails.types";
 
-const TaskDetails = ({ task }: IProps) => {
+const TaskDetails = ({ task, refetch }: IProps) => {
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
-  const { markTask, deleteTask } = useTasksContext();
+  const { handleUpdateTask, handleDeleteTask } = useTasksContext();
 
   const handleEditTask = (task: TTask) => {
     setTaskToEdit(task);
     open();
   };
 
-  const handleDeleteTask = (task: TTask) => {
+  const handleDeleteTaskButton = (taskId: number) => {
     Swal.fire({
       title: "Are you sure?",
       icon: "warning",
@@ -33,8 +33,8 @@ const TaskDetails = ({ task }: IProps) => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteTask(task);
-
+        handleDeleteTask(taskId.toString());
+        refetch();
         Swal.fire({
           title: "Deleted!",
           text: "Your task has been deleted.",
@@ -42,6 +42,18 @@ const TaskDetails = ({ task }: IProps) => {
         });
       }
     });
+  };
+
+  const handleMarkComplete = (task: TTask) => {
+    const markedTask: TUpdateTaskDto = {
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      priority: task.priority,
+      status: ETaskStatus.COMPLETED,
+    };
+    handleUpdateTask(markedTask, task.id.toString());
+    refetch();
   };
 
   return (
@@ -89,14 +101,14 @@ const TaskDetails = ({ task }: IProps) => {
         <Button
           leftSection={<IconTrash />}
           color={"red"}
-          onClick={() => handleDeleteTask(task)}
+          onClick={() => handleDeleteTaskButton(task.id)}
         >
           Delete
         </Button>
         {task?.status === ETaskStatus.COMPLETED ? (
           <Button disabled>Completed</Button>
         ) : (
-          <Button color="green" onClick={() => markTask(task)}>
+          <Button color="green" onClick={() => handleMarkComplete(task)}>
             Mark as complete
           </Button>
         )}
