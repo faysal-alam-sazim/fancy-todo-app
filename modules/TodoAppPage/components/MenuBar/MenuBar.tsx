@@ -69,7 +69,7 @@ const MenuBar = ({ open }: TMenuBarProps) => {
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
-          <Text>TO-DO App</Text>
+          <Text fw={"bold"}>TO-DO App</Text>
           <Button onClick={open} rightSection={<IconPlus />}>
             Create Task
           </Button>
@@ -103,6 +103,7 @@ const MenuBar = ({ open }: TMenuBarProps) => {
             value={filteringDate}
             onChange={handleDueDateInput}
             inputSize="xs"
+            placeholder="select a date"
           />
           <Button color="orange" mt={10} onClick={handleResetFilterButton}>
             Reset Filters
