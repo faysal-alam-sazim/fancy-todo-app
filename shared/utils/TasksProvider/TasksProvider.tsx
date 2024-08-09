@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import dayjs from "dayjs";
 
+import { useGetAllTasksQuery } from "@/shared/redux/rtk-apis/tasksAPI";
+
 import { TTask } from "../../typedefs/types";
 import { ETaskStatus } from "../../typedefs/enums";
 import {
@@ -33,16 +35,16 @@ function TasksProvider({ children }: IProps) {
   const [history, setHistory] = useState<TTask[][]>([[]]);
   const [currStateIndex, setCurrStateIndex] = useState(0);
   const [filter, setFilter] = useState<TFilter | null>(null);
+  const { data } = useGetAllTasksQuery();
 
   useEffect(() => {
-    const data = getSortedTasks();
-    setTasks(data);
-    setHistory([data]);
-  }, []);
+    data && setTasks(data);
+    data && setHistory([data]);
+  }, [data]);
 
   const getUpdatedTasks = () => {
     if (!filter) {
-      return getSortedTasks();
+      return tasks;
     }
     if (filter.by === "priority") {
       return filterByPriorty(filter.value);
