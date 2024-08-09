@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { TTask } from "@/shared/typedefs/types";
 
-import { TCreateTaskDto, TUpdateTaskDto } from "./tasksAPI.types";
+import { TCreateTaskDto, TUpdateTaskDto } from "@/shared/typedefs/types";
 
 export const api = createApi({
   reducerPath: "api",

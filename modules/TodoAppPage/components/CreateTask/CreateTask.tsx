@@ -1,5 +1,5 @@
 import { getLastTaskId } from "@/shared/utils/localStorage";
-import { TTask } from "@/shared/typedefs/types";
+import { TCreateTaskPayload, TTask } from "@/shared/typedefs/types";
 import { ETaskStatus } from "@/shared/typedefs/enums";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import TaskModal from "@/shared/components/TaskModal/TaskModal";
@@ -7,19 +7,17 @@ import TaskModal from "@/shared/components/TaskModal/TaskModal";
 import { TCreateTaskProps } from "./CreateTask.types";
 
 const CreateTask = ({ opened, close }: TCreateTaskProps) => {
-  const { addTask } = useTasksContext();
+  const { handleAddTask } = useTasksContext();
 
   const createTask = (data: TTask) => {
-    const id = getLastTaskId() + 1;
-    const task: TTask = {
-      id: id,
+    const task: TCreateTaskPayload = {
       title: data.title,
       description: data.description,
       dueDate: data.dueDate,
       priority: data.priority,
       status: ETaskStatus.ACTIVE,
     };
-    addTask(task);
+    handleAddTask(task);
   };
 
   return (

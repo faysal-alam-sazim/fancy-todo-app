@@ -7,18 +7,19 @@ import React, {
 } from "react";
 import dayjs from "dayjs";
 
-import { useGetAllTasksQuery } from "@/shared/redux/rtk-apis/tasksAPI";
+import {
+  useCreateTaskMutation,
+  useGetAllTasksQuery,
+} from "@/shared/redux/rtk-apis/tasksAPI";
 
-import { TTask } from "../../typedefs/types";
+import { TCreateTaskDto, TTask } from "../../typedefs/types";
 import { ETaskStatus } from "../../typedefs/enums";
 import {
-  addTaskToLocalStorage,
   deleteCompletedTasksFromLocalStorage,
   deleteTaskFromLocalStorage,
   getSortedTasks,
   getTaskFromLocalStorage,
   markTaskComplete,
-  saveLastTaskId,
   setTasksAtLocalStorage,
   updateTaskInLocalStorage,
 } from "../localStorage";
@@ -31,16 +32,15 @@ interface IProps {
 }
 
 function TasksProvider({ children }: IProps) {
-  const [tasks, setTasks] = useState<TTask[]>([]);
   const [history, setHistory] = useState<TTask[][]>([[]]);
   const [currStateIndex, setCurrStateIndex] = useState(0);
   const [filter, setFilter] = useState<TFilter | null>(null);
-  const { data } = useGetAllTasksQuery();
+  const { data: tasks, refetch } = useGetAllTasksQuery();
+  const [createTask] = useCreateTaskMutation();
 
   useEffect(() => {
-    data && setTasks(data);
-    data && setHistory([data]);
-  }, [data]);
+    tasks && setHistory([tasks]);
+  }, []);
 
   const getUpdatedTasks = () => {
     if (!filter) {
@@ -55,14 +55,16 @@ function TasksProvider({ children }: IProps) {
     return filterByDueDate(new Date(filter.value));
   };
 
-  const addTask = (task: TTask) => {
-    addTaskToLocalStorage(task);
-    saveLastTaskId(task.id);
-    const updatedTasks = getUpdatedTasks();
-    setTasks(updatedTasks);
+  const handleAddTask = async (task: TCreateTaskDto) => {
+    try {
+      await createTask(task).unwrap();
+      refetch();
+    } catch (err) {
+      alert(err);
+    }
 
     const prevHistory = history.slice(0, currStateIndex + 1);
-    setHistory([...prevHistory, [...updatedTasks]]);
+    tasks && setHistory([...prevHistory, [...tasks]]);
     setCurrStateIndex(prevHistory.length);
   };
 
@@ -78,7 +80,6 @@ function TasksProvider({ children }: IProps) {
     };
     updateTaskInLocalStorage(updatedTask);
     const updatedTasks = getUpdatedTasks();
-    setTasks(updatedTasks);
 
     const prevHistory = history.slice(0, currStateIndex + 1);
     setHistory([...prevHistory, [...updatedTasks]]);
@@ -89,7 +90,6 @@ function TasksProvider({ children }: IProps) {
     task.status = ETaskStatus.COMPLETED;
     markTaskComplete(task);
     const updatedTasks = getUpdatedTasks();
-    setTasks(updatedTasks);
 
     const prevHistory = history.slice(0, currStateIndex + 1);
     setHistory([...prevHistory, [...updatedTasks]]);
@@ -99,7 +99,6 @@ function TasksProvider({ children }: IProps) {
   const deleteTask = (task: TTask) => {
     deleteTaskFromLocalStorage(task);
     const updatedTasks = getUpdatedTasks();
-    setTasks(updatedTasks);
 
     const prevHistory = history.slice(0, currStateIndex + 1);
     setHistory([...prevHistory, [...updatedTasks]]);
@@ -109,7 +108,6 @@ function TasksProvider({ children }: IProps) {
   const clearCompletedTasks = () => {
     deleteCompletedTasksFromLocalStorage();
     const updatedTasks = getUpdatedTasks();
-    setTasks(updatedTasks);
 
     const prevHistory = history.slice(0, currStateIndex + 1);
     setHistory([...prevHistory, [...updatedTasks]]);
@@ -121,7 +119,6 @@ function TasksProvider({ children }: IProps) {
     const filteredTasks = allTasks.filter(
       (task: TTask) => task.priority === priority
     );
-    setTasks(filteredTasks);
     setFilter({ by: "priority", value: priority });
     return filteredTasks;
   };
@@ -131,7 +128,6 @@ function TasksProvider({ children }: IProps) {
     const filteredTasks = allTasks.filter(
       (task: TTask) => task.status === status
     );
-    setTasks(filteredTasks);
     setFilter({ by: "status", value: status });
     return filteredTasks;
   };
@@ -141,19 +137,16 @@ function TasksProvider({ children }: IProps) {
     const tasksMatchingDueDate = allTasks.filter((task: TTask) =>
       dayjs(task.dueDate).isSame(dayjs(date))
     );
-    setTasks(tasksMatchingDueDate);
     setFilter({ by: "dueDate", value: date.toDateString() });
     return tasksMatchingDueDate;
   };
 
   const resetFilter = () => {
-    setTasks(getSortedTasks());
     setFilter(null);
   };
 
   const undoState = () => {
     const prevState = history[currStateIndex - 1];
-    setTasks([...prevState]);
     setTasksAtLocalStorage([...prevState]);
     if (currStateIndex >= 0) {
       setCurrStateIndex(currStateIndex - 1);
@@ -162,7 +155,6 @@ function TasksProvider({ children }: IProps) {
 
   const redoState = () => {
     const fwdState = history[currStateIndex + 1];
-    setTasks([...fwdState]);
     setTasksAtLocalStorage([...fwdState]);
     if (currStateIndex < history.length) {
       setCurrStateIndex(currStateIndex + 1);
@@ -175,7 +167,7 @@ function TasksProvider({ children }: IProps) {
         tasks,
         history,
         currStateIndex,
-        addTask,
+        handleAddTask,
         updateTask,
         markTask,
         deleteTask,
