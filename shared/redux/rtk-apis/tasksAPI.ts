@@ -44,7 +44,15 @@ export const api = createApi({
     }),
 
     getTask: builder.query<TTask, string>({
-      query: (id) => `todos/:${id}`,
+      query: (id) => `todos/${id}`,
+    }),
+
+    syncTasks: builder.mutation<void, TTask[]>({
+      query: (tasksData) => ({
+        url: "todos/sync",
+        method: "PUT",
+        body: tasksData,
+      }),
     }),
   }),
 });
@@ -56,4 +64,5 @@ export const {
   useDeleteTaskMutation,
   useDeleteCompletedTaskMutation,
   useGetTaskQuery,
+  useSyncTasksMutation,
 } = api;
