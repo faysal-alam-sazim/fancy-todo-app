@@ -26,7 +26,6 @@ interface IProps {
 }
 
 function TasksProvider({ children }: IProps) {
-  const [currStateIndex, setCurrStateIndex] = useState(0);
   const [filter, setFilter] = useState<TFilter | null>(null);
   const { data, refetch, isSuccess } = useGetAllTasksQuery();
   const [tasks, setTasks] = useState<TTask[]>();
@@ -34,10 +33,11 @@ function TasksProvider({ children }: IProps) {
   const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
-  const [history, setHistory] = useState<TTask[][]>([[]]);
+
+  const [undoStack, setUndoStack] = useState<TTask[][]>([[]]);
+  const [redoStack, setRedoStack] = useState<TTask[][]>([[]]);
 
   useEffect(() => {
-    isSuccess && setHistory([data]);
     isSuccess && setTasks(sortTasks(data));
   }, [data]);
 
@@ -60,11 +60,10 @@ function TasksProvider({ children }: IProps) {
       refetch();
 
       const updatedTasks = getUpdatedTasks();
-      updatedTasks && setTasks(updatedTasks);
-
-      const prevHistory = history.slice(0, currStateIndex + 1);
-      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
-      setCurrStateIndex(prevHistory.length);
+      if (updatedTasks) {
+        setTasks(updatedTasks);
+        setUndoStack([...undoStack, updatedTasks]);
+      }
     } catch (err) {
       alert(err);
     }
@@ -79,11 +78,10 @@ function TasksProvider({ children }: IProps) {
       refetch();
 
       const updatedTasks = getUpdatedTasks();
-      updatedTasks && setTasks(updatedTasks);
-
-      const prevHistory = history.slice(0, currStateIndex + 1);
-      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
-      setCurrStateIndex(prevHistory.length);
+      if (updatedTasks) {
+        setTasks(updatedTasks);
+        setUndoStack([...undoStack, updatedTasks]);
+      }
     } catch (err) {
       alert(err);
     }
@@ -95,11 +93,10 @@ function TasksProvider({ children }: IProps) {
       refetch();
 
       const updatedTasks = getUpdatedTasks();
-      updatedTasks && setTasks(updatedTasks);
-
-      const prevHistory = history.slice(0, currStateIndex + 1);
-      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
-      setCurrStateIndex(prevHistory.length);
+      if (updatedTasks) {
+        setTasks(updatedTasks);
+        setUndoStack([...undoStack, updatedTasks]);
+      }
     } catch (err) {
       alert(err);
     }
@@ -111,11 +108,10 @@ function TasksProvider({ children }: IProps) {
       refetch();
 
       const updatedTasks = getUpdatedTasks();
-      updatedTasks && setTasks(updatedTasks);
-
-      const prevHistory = history.slice(0, currStateIndex + 1);
-      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
-      setCurrStateIndex(prevHistory.length);
+      if (updatedTasks) {
+        setTasks(updatedTasks);
+        setUndoStack([...undoStack, updatedTasks]);
+      }
     } catch (err) {
       alert(err);
     }
@@ -152,27 +148,31 @@ function TasksProvider({ children }: IProps) {
   };
 
   const undoState = () => {
-    const prevState = history[currStateIndex - 1];
-    setTasks([...prevState]);
-    if (currStateIndex >= 0) {
-      setCurrStateIndex(currStateIndex - 1);
-    }
+    const prevState = undoStack[undoStack.length - 1];
+    setTasks(prevState);
+
+    setUndoStack(undoStack.slice(0, -1));
+
+    const updatedTask = getUpdatedTasks();
+    updatedTask && setRedoStack([...redoStack, updatedTask]);
   };
 
   const redoState = () => {
-    const fwdState = history[currStateIndex + 1];
-    setTasks([...fwdState]);
-    if (currStateIndex < history.length) {
-      setCurrStateIndex(currStateIndex + 1);
-    }
+    const fwdState = redoStack[redoStack.length - 1];
+    setTasks(fwdState);
+
+    setRedoStack(redoStack.slice(0, -1));
+
+    const updatedTask = getUpdatedTasks();
+    updatedTask && setUndoStack([...undoStack, updatedTask]);
   };
 
   return (
     <TasksContext.Provider
       value={{
         tasks,
-        history,
-        currStateIndex,
+        undoStack,
+        redoStack,
         handleAddTask,
         handleUpdateTask,
         handleDeleteTask,
