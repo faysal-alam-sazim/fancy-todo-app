@@ -4,11 +4,9 @@ import { useRouter } from "next/router";
 import { Button, Flex, Text, Title } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 
-import { TTask } from "@/shared/typedefs/types";
-import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
+import { useGetTaskQuery } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import TaskDetails from "../components/TaskDetails/TaskDetails";
-import { useGetTaskQuery } from "@/shared/redux/rtk-apis/tasksAPI";
 
 const TaskDetailsContainer = () => {
   const router = useRouter();
@@ -26,7 +24,7 @@ const TaskDetailsContainer = () => {
       <Title>Task Details</Title>
 
       {task ? (
-        <TaskDetails task={task} refetch={refetch} />
+        <TaskDetails task={task} />
       ) : (
         <Text>Task is deleted. Please go back.</Text>
       )}

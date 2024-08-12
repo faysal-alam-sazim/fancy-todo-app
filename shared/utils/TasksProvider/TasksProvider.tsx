@@ -16,8 +16,8 @@ import {
 } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import { TCreateTaskDto, TTask, TUpdateTaskDto } from "../../typedefs/types";
-import { getSortedTasks, setTasksAtLocalStorage } from "../localStorage";
 import { ITasksContextType, TFilter } from "./TasksProvider.types";
+import { sortTasks } from "../utility";
 
 const TasksContext = createContext<ITasksContextType | undefined>(undefined);
 
@@ -26,18 +26,20 @@ interface IProps {
 }
 
 function TasksProvider({ children }: IProps) {
-  const [history, setHistory] = useState<TTask[][]>([[]]);
   const [currStateIndex, setCurrStateIndex] = useState(0);
   const [filter, setFilter] = useState<TFilter | null>(null);
-  const { data: tasks, refetch } = useGetAllTasksQuery();
+  const { data, refetch, isSuccess } = useGetAllTasksQuery();
+  const [tasks, setTasks] = useState<TTask[]>();
   const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
+  const [history, setHistory] = useState<TTask[][]>([[]]);
 
   useEffect(() => {
-    tasks && setHistory([tasks]);
-  }, []);
+    isSuccess && setHistory([data]);
+    isSuccess && setTasks(sortTasks(data));
+  }, [data]);
 
   const getUpdatedTasks = () => {
     if (!filter) {
@@ -56,13 +58,16 @@ function TasksProvider({ children }: IProps) {
     try {
       await createTask(task).unwrap();
       refetch();
+
+      const updatedTasks = getUpdatedTasks();
+      updatedTasks && setTasks(updatedTasks);
+
+      const prevHistory = history.slice(0, currStateIndex + 1);
+      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
+      setCurrStateIndex(prevHistory.length);
     } catch (err) {
       alert(err);
     }
-
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    tasks && setHistory([...prevHistory, [...tasks]]);
-    setCurrStateIndex(prevHistory.length);
   };
 
   const handleUpdateTask = async (data: TUpdateTaskDto, taskId: string) => {
@@ -72,75 +77,83 @@ function TasksProvider({ children }: IProps) {
         updatedTask: data,
       }).unwrap();
       refetch();
+
+      const updatedTasks = getUpdatedTasks();
+      updatedTasks && setTasks(updatedTasks);
+
+      const prevHistory = history.slice(0, currStateIndex + 1);
+      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
+      setCurrStateIndex(prevHistory.length);
     } catch (err) {
       alert(err);
     }
-
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    tasks && setHistory([...prevHistory, [...tasks]]);
-    setCurrStateIndex(prevHistory.length);
   };
 
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask({ id: taskId }).unwrap();
       refetch();
+
+      const updatedTasks = getUpdatedTasks();
+      updatedTasks && setTasks(updatedTasks);
+
+      const prevHistory = history.slice(0, currStateIndex + 1);
+      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
+      setCurrStateIndex(prevHistory.length);
     } catch (err) {
       alert(err);
     }
-
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    tasks && setHistory([...prevHistory, [...tasks]]);
-    setCurrStateIndex(prevHistory.length);
   };
 
   const clearCompletedTasks = async () => {
     try {
       await deleteCompletedTask().unwrap();
       refetch();
-    } catch (err) {
-      console.error("Failed to delete completed tasks: ", err);
-    }
 
-    const prevHistory = history.slice(0, currStateIndex + 1);
-    tasks && setHistory([...prevHistory, [...tasks]]);
-    setCurrStateIndex(prevHistory.length);
+      const updatedTasks = getUpdatedTasks();
+      updatedTasks && setTasks(updatedTasks);
+
+      const prevHistory = history.slice(0, currStateIndex + 1);
+      updatedTasks && setHistory([...prevHistory, [...updatedTasks]]);
+      setCurrStateIndex(prevHistory.length);
+    } catch (err) {
+      alert(err);
+    }
   };
 
   const filterByPriorty = (priority: string) => {
-    const allTasks = getSortedTasks();
-    const filteredTasks = allTasks.filter(
+    const filteredTasks = data?.filter(
       (task: TTask) => task.priority === priority
     );
     setFilter({ by: "priority", value: priority });
+    setTasks(filteredTasks);
     return filteredTasks;
   };
 
   const filterByStatus = (status: string) => {
-    const allTasks = getSortedTasks();
-    const filteredTasks = allTasks.filter(
-      (task: TTask) => task.status === status
-    );
+    const filteredTasks = data?.filter((task: TTask) => task.status === status);
     setFilter({ by: "status", value: status });
+    setTasks(filteredTasks);
     return filteredTasks;
   };
 
   const filterByDueDate = (date: Date) => {
-    const allTasks = getSortedTasks();
-    const tasksMatchingDueDate = allTasks.filter((task: TTask) =>
+    const tasksMatchingDueDate = data?.filter((task: TTask) =>
       dayjs(task.dueDate).isSame(dayjs(date))
     );
     setFilter({ by: "dueDate", value: date.toDateString() });
+    setTasks(tasksMatchingDueDate);
     return tasksMatchingDueDate;
   };
 
   const resetFilter = () => {
     setFilter(null);
+    data && setTasks(sortTasks(data));
   };
 
   const undoState = () => {
     const prevState = history[currStateIndex - 1];
-    setTasksAtLocalStorage([...prevState]);
+    setTasks([...prevState]);
     if (currStateIndex >= 0) {
       setCurrStateIndex(currStateIndex - 1);
     }
@@ -148,7 +161,7 @@ function TasksProvider({ children }: IProps) {
 
   const redoState = () => {
     const fwdState = history[currStateIndex + 1];
-    setTasksAtLocalStorage([...fwdState]);
+    setTasks([...fwdState]);
     if (currStateIndex < history.length) {
       setCurrStateIndex(currStateIndex + 1);
     }
