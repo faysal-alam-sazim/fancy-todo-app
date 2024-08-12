@@ -12,6 +12,7 @@ import {
   useDeleteCompletedTaskMutation,
   useDeleteTaskMutation,
   useGetAllTasksQuery,
+  useSyncTasksMutation,
   useUpdateTaskMutation,
 } from "@/shared/redux/rtk-apis/tasksAPI";
 
@@ -33,12 +34,15 @@ function TasksProvider({ children }: IProps) {
   const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
+  const [syncTasks] = useSyncTasksMutation();
 
   const [undoStack, setUndoStack] = useState<TTask[][]>([[]]);
   const [redoStack, setRedoStack] = useState<TTask[][]>([[]]);
 
   useEffect(() => {
-    isSuccess && setTasks(sortTasks(data));
+    if (isSuccess) {
+      setTasks(sortTasks(data));
+    }
   }, [data]);
 
   const getUpdatedTasks = () => {
@@ -155,6 +159,8 @@ function TasksProvider({ children }: IProps) {
 
     const updatedTask = getUpdatedTasks();
     updatedTask && setRedoStack([...redoStack, updatedTask]);
+
+    saveChanges(prevState);
   };
 
   const redoState = () => {
@@ -164,7 +170,20 @@ function TasksProvider({ children }: IProps) {
     setRedoStack(redoStack.slice(0, -1));
 
     const updatedTask = getUpdatedTasks();
-    updatedTask && setUndoStack([...undoStack, updatedTask]);
+    const storedTasksInUndo = [...undoStack];
+    updatedTask && setUndoStack([...storedTasksInUndo, updatedTask]);
+
+    saveChanges(fwdState);
+  };
+
+  const saveChanges = async (tasksToSave: TTask[]) => {
+    try {
+      setUndoStack([[]]);
+      setRedoStack([[]]);
+      await syncTasks(tasksToSave).unwrap();
+    } catch (error) {
+      console.error("Failed to sync tasks:", error);
+    }
   };
 
   return (
@@ -189,6 +208,7 @@ function TasksProvider({ children }: IProps) {
     </TasksContext.Provider>
   );
 }
+
 export const useTasksContext = () => {
   const context = useContext(TasksContext);
   if (!context) {
