@@ -15,7 +15,7 @@ import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
 
 const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
-  const { handleUpdateTask, deleteTask } = useTasksContext();
+  const { handleUpdateTask, handleDeleteTask } = useTasksContext();
 
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
   const [opened, { open, close }] = useDisclosure();
@@ -36,7 +36,7 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
     handleUpdateTask(markedTask, task.id.toString());
   };
 
-  const handleDeleteTask = (task: TTask) => {
+  const handleDeleteTaskButton = (taskId: number) => {
     Swal.fire({
       title: "Are you sure?",
       icon: "warning",
@@ -46,7 +46,7 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteTask(task);
+        handleDeleteTask(taskId.toString());
 
         Swal.fire({
           title: "Deleted!",
@@ -82,7 +82,7 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
               </Link>
               <Button
                 leftSection={<IconTrash />}
-                onClick={() => handleDeleteTask(task)}
+                onClick={() => handleDeleteTaskButton(task.id)}
                 color={"red"}
               >
                 Delete
