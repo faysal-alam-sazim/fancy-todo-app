@@ -7,7 +7,7 @@ import { TCreateTaskProps } from "./CreateTask.types";
 import { useCreateTaskMutation } from "@/shared/redux/rtk-apis/tasksAPI";
 
 const CreateTask = ({ opened, close }: TCreateTaskProps) => {
-  const { handleUndoStackAfterCreate } = useTasksContext();
+  const { handleUndoStackAfterCreate, resetFilter } = useTasksContext();
   const [createTask] = useCreateTaskMutation();
 
   const handleCreateTask = async (data: TTask) => {
@@ -20,6 +20,7 @@ const CreateTask = ({ opened, close }: TCreateTaskProps) => {
     };
     try {
       await createTask(task).unwrap();
+      resetFilter();
       handleUndoStackAfterCreate();
     } catch (err) {
       alert(err);

@@ -19,8 +19,11 @@ import EditTask from "../EditTask/EditTask";
 import { TDisplayTaskProps } from "./DisplayTask.types";
 
 const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
-  const { handleUndoStackAfterUpdate, handleUndoStackAfterDelete } =
-    useTasksContext();
+  const {
+    handleUndoStackAfterUpdate,
+    handleUndoStackAfterDelete,
+    resetFilter,
+  } = useTasksContext();
   const [deleteTask] = useDeleteTaskMutation();
 
   const [taskToEdit, setTaskToEdit] = useState<TTask | null>(null);
@@ -45,6 +48,7 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
         id: task.id.toString(),
         updatedTask: markedTask,
       }).unwrap();
+      resetFilter();
       handleUndoStackAfterUpdate();
     } catch (err) {
       alert(err);
@@ -63,6 +67,7 @@ const DisplayTask = ({ tasks }: TDisplayTaskProps) => {
       if (result.isConfirmed) {
         try {
           await deleteTask({ id: taskId.toString() }).unwrap();
+          resetFilter();
           handleUndoStackAfterDelete();
         } catch (err) {
           alert(err);
