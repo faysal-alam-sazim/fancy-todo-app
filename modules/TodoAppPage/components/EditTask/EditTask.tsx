@@ -1,4 +1,4 @@
-import { TTask, TUpdateTaskPayload } from "@/shared/typedefs/types";
+import { TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import TaskModal from "@/shared/components/TaskModal/TaskModal";
 
@@ -9,7 +9,7 @@ const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
 
   const editTask = (data: TTask) => {
     setTaskToEdit(null);
-    const updatedTask: TUpdateTaskPayload = {
+    const updatedTask: TUpdateTaskDto = {
       title: data.title,
       description: data.description,
       dueDate: data.dueDate,

@@ -19,6 +19,8 @@ const MenuBar = ({ open }: TMenuBarProps) => {
   const [filteringDate, setFilteringDate] = useState<Date | null>(null);
 
   const {
+    undoStack,
+    redoStack,
     filterByPriorty,
     filterByStatus,
     filterByDueDate,
@@ -26,8 +28,6 @@ const MenuBar = ({ open }: TMenuBarProps) => {
     clearCompletedTasks,
     undoState,
     redoState,
-    currStateIndex,
-    history,
   } = useTasksContext();
 
   const handlePriorityRadioButton = (value: string) => {
@@ -117,13 +117,10 @@ const MenuBar = ({ open }: TMenuBarProps) => {
           Clear Completed Task
         </Button>
         <Flex justify={"space-between"} mt={10}>
-          <Button onClick={undoState} disabled={currStateIndex === 0}>
+          <Button onClick={undoState} disabled={undoStack.length <= 1}>
             Undo
           </Button>
-          <Button
-            onClick={redoState}
-            disabled={currStateIndex + 1 >= history.length}
-          >
+          <Button onClick={redoState} disabled={redoStack.length <= 1}>
             Redo
           </Button>
         </Flex>
