@@ -1,13 +1,15 @@
 import { TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
 import { useTasksContext } from "@/shared/utils/TasksProvider/TasksProvider";
 import TaskModal from "@/shared/components/TaskModal/TaskModal";
+import { useUpdateTaskMutation } from "@/shared/redux/rtk-apis/tasksAPI";
 
 import { TEditTaskProps } from "./EditTask.types";
 
 const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
-  const { handleUpdateTask } = useTasksContext();
+  const { handleUndoStackAfterUpdate } = useTasksContext();
+  const [updateTask] = useUpdateTaskMutation();
 
-  const editTask = (data: TTask) => {
+  const handleEditTask = async (data: TTask) => {
     setTaskToEdit(null);
     const updatedTask: TUpdateTaskDto = {
       title: data.title,
@@ -16,7 +18,15 @@ const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
       priority: data.priority,
       status: data.status,
     };
-    handleUpdateTask(updatedTask, task.id.toString());
+    try {
+      await updateTask({
+        id: task.id.toString(),
+        updatedTask: updatedTask,
+      }).unwrap();
+      handleUndoStackAfterUpdate();
+    } catch (err) {
+      alert(err);
+    }
   };
 
   return (
@@ -27,7 +37,7 @@ const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
         title="Edit Task"
         buttonTitle="Update"
         task={task}
-        onSubmitAction={editTask}
+        onSubmitAction={handleEditTask}
         resetAfterSubmit={false}
       />
     </>
