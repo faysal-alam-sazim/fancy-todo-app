@@ -28,7 +28,7 @@ interface IProps {
 
 function TasksProvider({ children }: IProps) {
   const [filter, setFilter] = useState<TFilter | null>(null);
-  const { data, refetch, isSuccess } = useGetAllTasksQuery();
+  const { data, isSuccess } = useGetAllTasksQuery();
   const [tasks, setTasks] = useState<TTask[]>();
   const [createTask] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
@@ -61,7 +61,6 @@ function TasksProvider({ children }: IProps) {
   const handleAddTask = async (task: TCreateTaskDto) => {
     try {
       await createTask(task).unwrap();
-      refetch();
 
       const updatedTasks = getUpdatedTasks();
       if (updatedTasks) {
@@ -79,7 +78,6 @@ function TasksProvider({ children }: IProps) {
         id: taskId,
         updatedTask: data,
       }).unwrap();
-      refetch();
 
       const updatedTasks = getUpdatedTasks();
       if (updatedTasks) {
@@ -94,7 +92,6 @@ function TasksProvider({ children }: IProps) {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask({ id: taskId }).unwrap();
-      refetch();
 
       const updatedTasks = getUpdatedTasks();
       if (updatedTasks) {
@@ -109,7 +106,6 @@ function TasksProvider({ children }: IProps) {
   const clearCompletedTasks = async () => {
     try {
       await deleteCompletedTask().unwrap();
-      refetch();
 
       const updatedTasks = getUpdatedTasks();
       if (updatedTasks) {

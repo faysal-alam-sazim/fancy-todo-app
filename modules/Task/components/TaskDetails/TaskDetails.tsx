@@ -83,8 +83,8 @@ const TaskDetails = ({ task }: IProps) => {
 
       <Text size="md" c="dimmed" mb={4}>
         Priority:{" "}
-        <Badge color={getPriorityColor(task.priority)}>
-          {getPriority(task.priority)}
+        <Badge color={task && getPriorityColor(task.priority)}>
+          {task && getPriority(task.priority)}
         </Badge>
       </Text>
       <Text size="md" c="dimmed" mb={4}>
