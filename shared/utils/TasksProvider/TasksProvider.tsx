@@ -12,8 +12,8 @@ import {
   useSyncTasksMutation,
 } from "@/shared/redux/rtk-apis/tasksAPI";
 
-import { TCreateTaskDto, TTask, TUpdateTaskDto } from "../../typedefs/types";
-import { ITasksContextType, TFilter } from "./TasksProvider.types";
+import { TFilter, TTask } from "../../typedefs/types";
+import { ITasksContextType } from "./TasksProvider.types";
 import { sortTasks } from "../utility";
 
 const TasksContext = createContext<ITasksContextType | undefined>(undefined);
@@ -23,10 +23,14 @@ interface IProps {
 }
 
 function TasksProvider({ children }: IProps) {
-  const [filter, setFilter] = useState<TFilter | null>(null);
   const { data, isSuccess } = useGetAllTasksQuery();
   const [tasks, setTasks] = useState<TTask[]>();
   const [syncTasks] = useSyncTasksMutation();
+  const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
+    null
+  );
+  const [statusRadioValue, setStatusRadioValue] = useState<string | null>(null);
+  const [filteringDate, setFilteringDate] = useState<Date | null>(null);
 
   const [undoStack, setUndoStack] = useState<TTask[][]>([[]]);
   const [redoStack, setRedoStack] = useState<TTask[][]>([[]]);
@@ -38,16 +42,7 @@ function TasksProvider({ children }: IProps) {
   }, [data]);
 
   const getUpdatedTasks = () => {
-    if (!filter) {
-      return tasks;
-    }
-    if (filter.by === "priority") {
-      return filterByPriorty(filter.value);
-    }
-    if (filter.by === "status") {
-      return filterByStatus(filter.value);
-    }
-    return filterByDueDate(new Date(filter.value));
+    return tasks;
   };
 
   const handleUndoStackAfterCreate = () => {
@@ -82,33 +77,27 @@ function TasksProvider({ children }: IProps) {
     }
   };
 
-  const filterByPriorty = (priority: string) => {
-    const filteredTasks = data?.filter(
-      (task: TTask) => task.priority === priority
-    );
-    setFilter({ by: "priority", value: priority });
-    setTasks(filteredTasks);
-    return filteredTasks;
-  };
+  const filterTasks = (filter: TFilter) => {
+    const filteredTasks = data?.filter((task) => {
+      const priorityMatch = filter?.priority
+        ? task.priority === filter.priority
+        : true;
 
-  const filterByStatus = (status: string) => {
-    const filteredTasks = data?.filter((task: TTask) => task.status === status);
-    setFilter({ by: "status", value: status });
-    setTasks(filteredTasks);
-    return filteredTasks;
-  };
+      const statusMatch = filter?.status ? task.status === filter.status : true;
 
-  const filterByDueDate = (date: Date) => {
-    const tasksMatchingDueDate = data?.filter((task: TTask) =>
-      dayjs(task.dueDate).isSame(dayjs(date))
-    );
-    setFilter({ by: "dueDate", value: date.toDateString() });
-    setTasks(tasksMatchingDueDate);
-    return tasksMatchingDueDate;
+      const dueDateMatch = filter?.dueDate
+        ? dayjs(task.dueDate).isSame(dayjs(filter.dueDate))
+        : true;
+
+      return priorityMatch && statusMatch && dueDateMatch;
+    });
+    filteredTasks && setTasks(sortTasks(filteredTasks));
   };
 
   const resetFilter = () => {
-    setFilter(null);
+    setPriorityRadioValue(null);
+    setStatusRadioValue(null);
+    setFilteringDate(null);
     data && setTasks(sortTasks(data));
   };
 
@@ -155,12 +144,16 @@ function TasksProvider({ children }: IProps) {
         handleUndoStackAfterUpdate,
         handleUndoStackAfterDelete,
         handleUndoStackAfterClearCompleted,
-        filterByPriorty,
-        filterByStatus,
-        filterByDueDate,
         resetFilter,
         undoState,
         redoState,
+        filterTasks,
+        priorityRadioValue,
+        statusRadioValue,
+        filteringDate,
+        setPriorityRadioValue,
+        setStatusRadioValue,
+        setFilteringDate,
       }}
     >
       {children}

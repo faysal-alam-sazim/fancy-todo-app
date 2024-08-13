@@ -29,3 +29,9 @@ export type TUpdateTaskDto = {
   priority?: EPriority;
   status?: ETaskStatus;
 };
+
+export type TFilter = {
+  priority?: string;
+  status?: string;
+  dueDate?: Date | null;
+};

@@ -10,57 +10,70 @@ import { useDeleteCompletedTaskMutation } from "@/shared/redux/rtk-apis/tasksAPI
 
 import classes from "./MenuBar.module.css";
 import { TMenuBarProps } from "./MenuBar.types";
+import { TFilter } from "@/shared/typedefs/types";
 
 const MenuBar = ({ open }: TMenuBarProps) => {
   const [deleteCompletedTask] = useDeleteCompletedTaskMutation();
-  const [priorityRadioValue, setPriorityRadioValue] = useState<string | null>(
-    null
-  );
-  const [statusRadioValue, setStatusRadioValue] = useState<string | null>(null);
-  const [filteringDate, setFilteringDate] = useState<Date | null>(null);
+  const [filter, setFilter] = useState<TFilter | null>(null);
   const {
     undoStack,
     redoStack,
-    filterByPriorty,
-    filterByStatus,
-    filterByDueDate,
     resetFilter,
     handleUndoStackAfterClearCompleted,
     undoState,
     redoState,
+    filterTasks,
+    priorityRadioValue,
+    statusRadioValue,
+    filteringDate,
+    setPriorityRadioValue,
+    setStatusRadioValue,
+    setFilteringDate,
   } = useTasksContext();
 
   const handlePriorityRadioButton = (value: string) => {
     setPriorityRadioValue(value);
-    setStatusRadioValue(null);
-    setFilteringDate(null);
-
-    filterByPriorty(value);
+    if (filter) {
+      const updatedFilter = filter;
+      updatedFilter.priority = value;
+      setFilter(updatedFilter);
+      filterTasks(updatedFilter);
+    } else {
+      setFilter({ priority: value });
+      filterTasks({ priority: value });
+    }
   };
 
   const handleStatusRadioButton = (value: string) => {
     setStatusRadioValue(value);
-    setPriorityRadioValue(null);
-    setFilteringDate(null);
-
-    filterByStatus(value);
+    if (filter) {
+      const updatedFilter = filter;
+      updatedFilter.status = value;
+      setFilter(updatedFilter);
+      filterTasks(updatedFilter);
+    } else {
+      setFilter({ status: value });
+      filterTasks({ status: value });
+    }
   };
 
   const handleDueDateInput = (value: Date | null) => {
-    setStatusRadioValue(null);
-    setPriorityRadioValue(null);
     setFilteringDate(value);
-
+    if (filter) {
+      const updatedFilter = filter;
+      updatedFilter.dueDate = value;
+      setFilter(updatedFilter);
+      filterTasks(updatedFilter);
+    } else {
+      setFilter({ dueDate: value });
+      filterTasks({ dueDate: value });
+    }
     if (value) {
-      filterByDueDate(value);
     }
   };
 
   const handleResetFilterButton = () => {
-    setPriorityRadioValue(null);
-    setStatusRadioValue(null);
-    setFilteringDate(null);
-
+    setFilter(null);
     resetFilter();
   };
 

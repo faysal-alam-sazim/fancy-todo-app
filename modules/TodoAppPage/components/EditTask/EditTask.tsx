@@ -6,7 +6,7 @@ import { useUpdateTaskMutation } from "@/shared/redux/rtk-apis/tasksAPI";
 import { TEditTaskProps } from "./EditTask.types";
 
 const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
-  const { handleUndoStackAfterUpdate } = useTasksContext();
+  const { handleUndoStackAfterUpdate, resetFilter } = useTasksContext();
   const [updateTask] = useUpdateTaskMutation();
 
   const handleEditTask = async (data: TTask) => {
@@ -23,6 +23,7 @@ const EditTask = ({ opened, close, task, setTaskToEdit }: TEditTaskProps) => {
         id: task.id.toString(),
         updatedTask: updatedTask,
       }).unwrap();
+      resetFilter();
       handleUndoStackAfterUpdate();
     } catch (err) {
       alert(err);

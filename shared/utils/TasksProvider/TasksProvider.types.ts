@@ -1,4 +1,5 @@
-import { TCreateTaskDto, TTask, TUpdateTaskDto } from "@/shared/typedefs/types";
+import { EPriority, ETaskStatus } from "@/shared/typedefs/enums";
+import { TFilter, TTask } from "@/shared/typedefs/types";
 
 export interface ITasksContextType {
   tasks: TTask[] | undefined;
@@ -8,15 +9,14 @@ export interface ITasksContextType {
   handleUndoStackAfterUpdate: () => void;
   handleUndoStackAfterDelete: () => void;
   handleUndoStackAfterClearCompleted: () => void;
-  filterByPriorty: (priority: string) => TTask[] | undefined;
-  filterByStatus: (status: string) => TTask[] | undefined;
-  filterByDueDate: (date: Date) => TTask[] | undefined;
   resetFilter: () => void;
   undoState: () => void;
   redoState: () => void;
+  filterTasks: (filter: TFilter) => void;
+  priorityRadioValue: string | null;
+  statusRadioValue: string | null;
+  filteringDate: Date | null;
+  setPriorityRadioValue: (value: string | null) => void;
+  setStatusRadioValue: (value: string | null) => void;
+  setFilteringDate: (value: Date | null) => void;
 }
-
-export type TFilter = {
-  by: "priority" | "status" | "dueDate";
-  value: string;
-};
